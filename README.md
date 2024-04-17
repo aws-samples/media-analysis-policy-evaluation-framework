@@ -81,9 +81,9 @@ Update the values with your target AWS account ID and the region where you inten
 export CDK_DEFAULT_ACCOUNT=YOUR_ACCOUNT_ID
 export CDK_DEFAULT_REGION=YOUR_TARGET_REGION (e.x, us-east-1)
 ```
-(Optional) CDK_INPUT_OPENSEARCH_CONFIG: Configure the size of the Amazon OpenSearch cluster, accepting either "Dev" or "Prod" as values with a default value set to "Dev".
+CDK_INPUT_OPENSEARCH_CONFIG: Configure the size of the Amazon OpenSearch cluster, accepting either "Dev" or "Prod" as values.
 - Dev: suitable for development or testing environment. (No master node, 1 data node: m5.large.search)
-- Prod: suitable for handling large volumes of video data. (3 master nodes: m4.small.search, 2 data nodes: m5.large=2)
+- Prod: suitable for handling large volumes of video data. (3 master nodes: m4.small.search, 2 data nodes: m5.large.search=2)
 ```
 export CDK_INPUT_OPENSEARCH_CONFIG=OPENSEARCH_CONFIG ("Dev" or "Prod", default value: "Dev")
 ```
