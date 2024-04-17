@@ -1,0 +1,162 @@
+{
+  "Comment": "A description of my state machine",
+  "StartAt": "sample frames from video",
+  "States": {
+    "sample frames from video": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "Payload.$": "$",
+        "FunctionName": "##LAMBDA_ES_SAMPLE_VIDEO##"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "If sampling completed"
+    },
+    "If sampling completed": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.SampleCompleted",
+          "BooleanEquals": true,
+          "Next": "Loop through sampled images"
+        }
+      ],
+      "Default": "sample frames from video"
+    },
+    "Loop through sampled images": {
+      "Type": "Map",
+      "ItemProcessor": {
+        "ProcessorConfig": {
+          "Mode": "DISTRIBUTED",
+          "ExecutionType": "STANDARD"
+        },
+        "StartAt": "Extract metadata - Rekogniiton and Logo",
+        "States": {
+          "Extract metadata - Rekogniiton and Logo": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "OutputPath": "$.Payload",
+            "Parameters": {
+              "FunctionName": "##LAMBDA_ES_IMAGE_EXTRACTION##",
+              "Payload.$": "$"
+            },
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "Lambda.ServiceException",
+                  "Lambda.AWSLambdaException",
+                  "Lambda.SdkClientException",
+                  "Lambda.TooManyRequestsException"
+                ],
+                "IntervalSeconds": 1,
+                "MaxAttempts": 3,
+                "BackoffRate": 2
+              }
+            ],
+            "Next": "Image caption, MM and text embedding"
+          },
+          "Image caption, MM and text embedding": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "OutputPath": "$.Payload",
+            "Parameters": {
+              "Payload.$": "$",
+              "FunctionName":"##LAMBDA_ES_IMAGE_CAPTION_MM##"
+            },
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "Lambda.ServiceException",
+                  "Lambda.AWSLambdaException",
+                  "Lambda.SdkClientException",
+                  "Lambda.TooManyRequestsException"
+                ],
+                "IntervalSeconds": 1,
+                "MaxAttempts": 3,
+                "BackoffRate": 2
+              }
+            ],
+            "End": true
+          }
+        }
+      },
+      "Label": "Loopthroughsampledimages",
+      "MaxConcurrency": ##VIDEO_IMAGE_EXTRACTION_CONCURRENT_LIMIT##,
+      "ItemReader": {
+        "Resource": "arn:aws:states:::s3:listObjectsV2",
+        "Parameters": {
+          "Bucket.$": "$.MetaData.VideoFrameS3.S3Bucket",
+          "Prefix.$": "$.MetaData.VideoFrameS3.S3Prefix"
+        }
+      },
+      "ItemSelector": {
+        "Request.$": "$.Request",
+        "MetaData.$": "$.MetaData",
+        "Key.$": "$$.Map.Item.Value.Key"
+      },
+      "ResultPath": "$.Result",
+      "Next": "Policy evaluation"
+    },
+    "Policy evaluation": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "OutputPath": "$.Payload",
+      "Parameters": {
+        "Payload.$": "$",
+        "FunctionName": "##LAMBDA_ES_EVALUATION##"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "Choice"
+    },
+    "Choice": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Not": {
+            "Variable": "$.body.Request.SnsArn",
+            "IsPresent": true
+          },
+          "Next": "Success"
+        }
+      ],
+      "Default": "SNS Publish - extraction completion"
+    },
+    "Success": {
+      "Type": "Succeed"
+    },
+    "SNS Publish - extraction completion": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "Message.$": "$",
+        "TopicArn.$": "$.body.Request.SnsArn"
+      },
+      "Next": "Success"
+    }
+  }
+}

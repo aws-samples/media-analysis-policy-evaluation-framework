@@ -1,0 +1,65 @@
+.videoanalysis {
+    padding-left: 10px;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.modalfooter {
+    display: block;
+    float: right;
+}
+.videoanalysis .key {
+    display: inline-block;
+    font-weight: bold;
+    padding-top: 5px;
+    font-size: medium;
+}
+.videoanalysis .desc {
+    display: block;
+    font-size: small;
+    color:gray;
+    padding-bottom: 5px;
+}
+.videoanalysis .selectmodel {
+    display: block;
+    width: 100%;
+    padding-top: 10px;
+}
+.videoanalysis .selecttemp {
+    display: block;
+    width: 100%;
+    padding: 10px 0px 10px 0px;
+}
+.videoanalysis .promptseditor {
+    display: inline-block;
+    width: 59%;
+}
+.videoanalysis .promptseditor .editor {
+    width: 100%;
+    border-radius: 10px;
+    padding:5px;
+}
+
+.videoanalysis .promptseditor .previewtoggle {
+    display: inline-block;
+    float: right;
+    vertical-align: top;
+    padding-top: 5px;
+}
+.videoanalysis .promptseditor .selectplaceholder {
+    display: inline-block;
+    padding-bottom: 10px;
+}
+.videoanalysis .llmresp {
+    display: block;
+    width: 39%;
+    float: right;
+    vertical-align: top;
+}
+.videoanalysis .llm-resp {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgb(230, 222, 230);
+    margin-top: 15px;
+}

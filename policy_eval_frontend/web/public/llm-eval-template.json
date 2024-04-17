@@ -1,0 +1,108 @@
+{
+    "templates": [
+        {
+            "id": "simple_moderation",
+            "type": "evaluation",
+            "name": "Moderate video content",
+            "description": "",
+            "prompts_template": "Human: You are a specialist responsible for reviewing content to ensure compliance with company policies. Your task involves evaluating videos.\nThe transcription of the video is within the <transcription> tag. Celebrity faces detected in the video are within the <celebrity> tag. The detected label from the video is located in the <label> tag, and the moderation detection label is within the <moderation> tag. You can find the company policy in the <policy> tag.\n\n<transcription>##TRANSCRIPTION##</transcription>\n<celebrity>##CELEBRITY##</celebrity>\n<label>##LABEL##</label>\n<moderation>##MODERATION##</moderation>\n<policy>The content could not contain anything against nudity, violence, suggestive, hate symbols, hate speech and more. Anything consider alcohol or smoking violate the policy</policy>\n\nDoes the video violate the trust and safety policy?\nPlease consider and provide your analysis in the <analysis> tag, keeping the analysis within 100 words.Respond in the <answer> tag with either 'Y' or 'N'. 'Y' indicates that the message sounds like a political Ads, while 'N' means the content sounds normal.\nAssistant:",
+            "bedrock_llm_model_id": "anthropic.claude-v2:1",
+            "bedrock_knowledge_base_id": ""
+        },
+        {
+            "id": "transcription_summarization",
+            "type": "analysis",
+            "name": "Generate a summary of the video using its transcription",
+            "description": "",
+            "prompts_template": "Human: Summarize the video based on the transcription provided. Include details about the individuals involved, any actions taken, and the location mentioned. Provide a concise overview of the events depicted in the video, focusing on key points such as the discovery made, instructions given, and outcomes observed. Keep the summary in 100 tokens. You can find the video transcription in the <trans> tag below:\n\n<trans>##TRANSCRIPTION##</trans>\n\nAssistant:",
+            "bedrock_llm_model_id": "anthropic.claude-v2:1",
+            "bedrock_knowledge_base_id": ""
+        },
+        {
+            "id": "transcription_summarization_with_image_caption",
+            "type": "analysis",
+            "name": "Generate a summary of the video utilizing its subtitles and image summaries",
+            "description": "",
+            "prompts_template": "Human: Summarize the video using image frame descriptions and transcription subtitles. \n\nThe image descriptions and timestamps (in seconds) are provided here: ##IMAGECAPTION##.\nThe transcription subtitles are provided here: ##SUBTITLE##.\n\nAssistant:",
+            "bedrock_llm_model_id": "anthropic.claude-3-sonnet-20240229-v1:0",
+            "bedrock_knowledge_base_id": ""
+        },
+        {
+            "id": "sample_question",
+            "type": "analysis",
+            "name": "Sample Q & A: is there police officers in the video?",
+            "description": "",
+            "prompts_template": "Human: Does the video feature a police officer? If yes, specify the timestamp. Summary: Detects presence of police officer and provides corresponding timestamp within 100 tokens. You can find the video transcription in the <trans> tag and labels in the <logo> tag: \n\n<trans>##TRANSCRIPTION##</trans>\n<logo>##LOGO##</logo>\n\nAssistant:",
+            "bedrock_llm_model_id": "anthropic.claude-v2:1",
+            "bedrock_knowledge_base_id": ""
+        },
+        {
+            "id": "iab_classification",
+            "type": "analysis",
+            "name": "Sample classification: classify the video into IAB categories",
+            "description": "",
+            "prompts_template": "Human: classify the video into an IAB category.\nTranscription: ##TRANSCRIPTION##\nLabel: ##LABEL##\nText extracted from image frames:##TEXT##\nModeration categories: ##MODERATION##\nCelebrities: ##CELEBRITY##\n\nAssistant:",
+            "bedrock_llm_model_id": "anthropic.claude-3-sonnet-20240229-v1:0",
+            "bedrock_knowledge_base_id": ""
+        }
+    ],
+    "bedrock_model_ids": [
+        {
+            "name": "Anthropic Claude V2.1",
+            "value": "anthropic.claude-v2:1"
+        },
+        {
+            "name": "Anthropic Claude V2",
+            "value": "anthropic.claude-v2"
+        },
+        {
+            "name": "Anthropic Claude Instance V1",
+            "value": "anthropic.claude-instant-v1"
+        },
+        {
+            "name": "Anthropic Claude V3 Sonnet",
+            "value": "anthropic.claude-3-sonnet-20240229-v1:0"
+        }
+    ],
+    "bedrock_knowledge_bases": [
+        
+    ],
+    "video_sample_interval": [
+        {
+            "name": "2 frames per second",
+            "value": 0.5
+        },
+        {
+            "name": "1 frame per second",
+            "value": 1
+        },
+        {
+            "name": "Sample every 2 seconds",
+            "value": 2
+        },
+        {
+            "name": "Sample every 3 seconds",
+            "value": 3
+        },
+        {
+            "name": "Sample every 4 seconds",
+            "value": 4
+        },
+        {
+            "name": "Sample every 5 seconds",
+            "value": 5
+        },
+        {
+            "name": "Sample every 10 seconds",
+            "value": 10
+        },
+        {
+            "name": "Sample every 30 seconds",
+            "value": 30
+        },
+        {
+            "name": "Sample every 1 minute",
+            "value": 60
+        }
+    ]
+}

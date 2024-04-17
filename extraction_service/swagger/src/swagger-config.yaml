@@ -1,0 +1,472 @@
+openapi: "3.0.1"
+info:
+  title: "AWS content analysis & custom policy evaluation service APIs"
+  version: "2024-03-10T15:30:20Z"
+servers:
+- url: "[[[APIGW_URL_EXTR_SRV]]]/{basePath}"
+  variables:
+    basePath:
+      default: "v1"
+paths:
+  /extraction/video/get-task:
+    post:
+      summary: "Get video extraction task by Id. The result includes the original task request details along with the aggregated extraction values."
+      tags:
+        - Extraction service
+      parameters:
+        - name: x-api-key
+          in: headers
+          description: API key for authentication and access control
+          required: GetVideoTaskRequest
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetVideoTaskRequest"
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetVideoTaskResponse"
+  /extraction/video/start-task:
+    post:
+      summary: "Start a video extraction task. Asyncronized API."
+      tags:
+        - Extraction service
+      parameters:
+        - name: x-api-key
+          in: headers
+          description: API key for authentication and access control
+          required: GetVideoTaskRequest
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVideoTaskRequest"
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateVideoTaskResponse"
+  /extraction/video/delete-task:
+    post:
+      summary: "Delete a video extraction task by Id"
+      tags:
+        - Extraction service
+      parameters:
+        - name: x-api-key
+          in: headers
+          description: API key for authentication and access control
+          required: GetVideoTaskRequest
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteVideoTaskRequest"
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteVideoTaskResponse"
+  /extraction/video/search-task:
+    post:
+      summary: "Search video based on video extraction multi-modal embeddings in vector DB"
+      tags:
+        - Extraction service
+      parameters:
+        - name: x-api-key
+          in: headers
+          description: API key for authentication and access control
+          required: GetVideoTaskRequest
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchVideoTaskMmRequest"
+      responses:
+        "200":
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchVideoTaskMmResponse"
+components:
+  schemas:
+    GetVideoTaskRequest:
+      title: "Get video extraction task request"
+      type: "object"
+      properties:
+        TaskId:
+          type: string
+          description: The unique identifier for the video extraction task Id
+    GetVideoTaskResponse:
+      title: "Get video extraction task response"
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        body:
+          type: object
+          properties:
+            Request:
+              type: object
+              properties:
+                TaskId:
+                  type: string
+                FileName:
+                  type: string
+                RequestBy:
+                  type: string
+                Video:
+                  type: object
+                  properties:
+                    S3Object:
+                      type: object
+                      properties:
+                        Bucket:
+                          type: string
+                        Key:
+                          type: string
+                PreProcessSetting:
+                  type: object
+                  properties:
+                    SampleMode:
+                      type: string
+                    SampleIntervalS:
+                      type: integer
+                ExtractionSetting:
+                  type: object
+                  properties:
+                    Transcription:
+                      type: boolean
+                    DetectLabel:
+                      type: boolean
+                    DetectText:
+                      type: boolean
+                    DetectCelebrity:
+                      type: boolean
+                    DetectModeration:
+                      type: boolean
+                    CustomModerationArn:
+                      type: string
+                    DetectLogo:
+                      type: boolean
+                EvaluationSetting:
+                  type: object
+                  properties:
+                    PromptsTemplate:
+                      type: string
+                    KnowledgeBaseId:
+                      type: string
+                    LLMsModelId:
+                      type: string
+            Status:
+              type: string
+            RequestTs:
+              type: string
+            MetaData:
+              type: object
+              properties:
+                TrasnscriptionOutput:
+                  type: string
+                VideoFrameS3:
+                  type: object
+                  properties:
+                    S3Bucket:
+                      type: string
+                    S3Prefix:
+                      type: string
+                VideoMetaData:
+                  type: object
+                  properties:
+                    ThumbnailS3Bucket:
+                      type: string
+                    Size:
+                      type: integer
+                      format: int64
+                    Fps:
+                      type: integer
+                      format: int32
+                    Duration:
+                      type: number
+                      format: double
+                    NameFormat:
+                      type: string
+                    Resolution:
+                      type: array
+                      items:
+                        type: integer
+                        format: int32
+                    ThumbnailS3Key:
+                      type: string
+            VideoDuration:
+              type: number
+              format: double
+            EvaluationResult:
+              type: object
+              properties:
+                answer:
+                  type: string
+                references:
+                  type: array
+                  items:
+                    type: object
+                analysis:
+                  type: string
+                prompts:
+                  type: string
+            VideoUrl:
+              type: string
+            Transcription:
+              type: object
+              properties:
+                language_code:
+                  type: string
+                transcription:
+                  type: array
+                  items:
+                    type: string
+                subtitles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      start_ts:
+                        type: number
+                        format: double
+                      end_ts:
+                        type: number
+                        format: double
+                      transcription:
+                        type: string
+            DetectLabel:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  timestamps:
+                    type: array
+                    items:
+                      type: number
+                      format: double
+            DetectCelebrity:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  timestamps:
+                    type: array
+                    items:
+                      type: number
+                      format: double
+            DetectText:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  timestamps:
+                    type: array
+                    items:
+                      type: number
+                      format: double
+            DetectModeration:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  timestamps:
+                    type: array
+                    items:
+                      type: number
+                      format: double
+            DetectLogo:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  timestamps:
+                    type: array
+                    items:
+                      type: number
+                      format: double
+    CreateVideoTaskRequest:
+      title: "Create video extraction task request"
+      type: object
+      properties:
+        TaskId:
+          type: string
+          description: The unique identifier for the task
+        Video:
+          type: object
+          properties:
+            S3Object:
+              type: object
+              properties:
+                Bucket:
+                  type: string
+                  description: The S3 bucket name
+                Key:
+                  type: string
+                  description: The S3 object key
+        PreProcessSetting:
+          type: object
+          properties:
+            SampleMode:
+              type: string
+              description: The mode for sampling
+              enum: [even, odd]
+            SampleIntervalS:
+              type: integer
+              description: The interval for sampling in seconds
+        ExtractionSetting:
+          type: object
+          properties:
+            Transcription:
+              type: boolean
+              description: Whether transcription should be detected
+            DetectLabel:
+              type: boolean
+              description: Whether labels should be detected
+            DetectText:
+              type: boolean
+              description: Whether text should be detected
+            DetectCelebrity:
+              type: boolean
+              description: Whether celebrities should be detected
+            DetectModeration:
+              type: boolean
+              description: Whether moderation should be detected
+            CustomModerationArn:
+              type: string
+              description: The ARN of the custom moderation model
+            DetectLogo:
+              type: boolean
+              description: Whether logos should be detected
+        EvaluationSetting:
+          type: object
+          properties:
+            PromptsTemplate:
+              type: string
+              description: The template for evaluation prompts
+            KnowledgeBaseId:
+              type: string
+              description: The ID of the knowledge base
+            LLMsModelId:
+              type: string
+              description: The ID of the LLMs model
+    CreateVideoTaskResponse:
+      title: "Create video extraction task response"
+      type: object
+      properties:
+        TaskId:
+          type: string
+          description: The unique identifier for the task
+    DeleteVideoTaskRequest:
+      title: "Delete video extraction task request"
+      type: "object"
+      properties:
+        TaskId:
+          type: string
+          description: The unique identifier for the video extraction task Id
+    DeleteVideoTaskResponse:
+      title: "Delete video extraction task response"
+      type: "string"
+      sample: "Video task deleted successfully"
+    SearchVideoTaskMmRequest:
+      title: "Search videos: Retrieve all videos or search within specific indices, including full-text search (Amazon Titan), text embedding (Amazon Titan), and multi-modal embeddings."
+      type: "object"
+      properties:
+        SearchText:
+          type: string
+          description: The keywords and phrases you need to search
+          default: null
+        Source:
+          type: string
+          enum:
+            - text
+            - text_embedding
+            - mm_embedding
+          description: "Supported search types: Must be one of the following values: \"text\", \"text_embedding\", or \"mm_embedding\"."
+        PageSize:
+          type: integer
+          description: The max numbers of tasks returned
+          default: 12
+        FromIndex:
+          type: integer
+          description: From which index - for pagination
+          default: 0
+        ScoreThreshold:
+          type: number
+          description: "Similarity threshold: Optional input when the Source is \"text_embedding\" or \"mm_embedding\" for vector search."
+          default: null
+        ImageBytes:
+          type: string
+          description: "Image Base64 string for multi-modal embedding search. Optional input when the Source is \"mm_embedding\"."
+          default: null
+        RequestBy:
+          type: string
+          description: Username of the Cognitive user who requested the video task.
+    SearchVideoTaskMmResponse:
+      title: "Search videos in multi-modal embeddings in vector DB response"
+      type: object
+      properties:
+        TaskId:
+          type: string
+          description: The ID of the task.
+        FileName:
+          type: string
+          description: The name of the file.
+        RequestTs:
+          type: string
+          format: date-time
+          description: The timestamp of the request.
+        Status:
+          type: string
+          description: The status of the task.
+        ThumbnailUrl:
+          type: string
+          description: The URL of the thumbnail.
+        Violation:
+          type: boolean
+          description: Whether there was a violation.
