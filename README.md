@@ -1,4 +1,4 @@
-# Media Analysis and Policy Evaluation Framework - Beta
+# Media Analysis and Policy Evaluation Framework
 
 Customers in Media & Entertainment, Advertising, and Social Media require an effective solution for extracting metadata from media assets such as video, audio, and images. They also need flexible analysis options, including summarization and policy evaluation. This solution serves as a generic framework allowing users to streamline the extraction and evaluation processes.
 
