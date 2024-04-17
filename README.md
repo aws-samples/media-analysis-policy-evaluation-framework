@@ -68,7 +68,7 @@ git clone https://github.com/aws-samples/media-analysis-policy-evaluation-framew
 cd media-analysis-policy-evaluation-framework
 ```
 
-2. Set up environment varaibles 
+2. Set up environment variables 
 
 Set environment variables as input parameters for the CDK deployment package:
 
