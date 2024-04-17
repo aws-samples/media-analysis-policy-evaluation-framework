@@ -63,11 +63,9 @@ If your CloudShell instance has older dependency libraries like npm or pip, it m
 
 ### Deploy the CDK package using CloudShell
 1. Clone the source code from GitHub repo 
-
-(Please download the zip file, upload it to CloudShell, and unzip the folder for testing purposes if the repo is not published on GitHub yet.)
 ```
-git clone https://github.com/aws-samples/aws-content-analysis-and-policy-evaluation
-cd aws-content-analysis-and-policy-evaluation
+git clone git@github.com:aws-samples/media-analysis-policy-evaluation-framework.git
+cd media-analysis-policy-evaluation-framework
 ```
 
 2. Set up environment varaibles 
