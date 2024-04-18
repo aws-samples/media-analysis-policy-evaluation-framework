@@ -100,6 +100,7 @@ def on_create(event):
       response = cognito.update_user_pool(
           UserPoolId=COGNITO_USER_POOL_ID,
           AdminCreateUserConfig={
+            'AllowAdminCreateUserOnly': True,
             'InviteMessageTemplate': {
                 #'SMSMessage': 'string',
                 'EmailMessage': email_body,
