@@ -53,4 +53,5 @@ Customers need to evaluate their media assets against internal and external poli
 
 ## Deployment instruction
 Follow this instruction to deploy the solution to your AWS account.
-[Deply all components, including the web portal](./deployment-instruction.md)
+
+[Deploy all components, including the web portal](./deployment-instruction.md)
