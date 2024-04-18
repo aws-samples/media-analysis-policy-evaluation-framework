@@ -13,107 +13,24 @@ This tool can be utilized for comprehensive video content analysis, encompassing
 - IAB classfication
 - Video summarization
 
-## Supported AWS regions
-The solution requires AWS AI services, including Amazon Bedrock, Amazon Rekognition and Amazon Transcribe, which are available in certain regions. Please choose one of the below AWS regions to deploy the CDK package.
+## Watch the demo video
+[![Demo video](./static/demo-video-thumbnail.png)](https://www.youtube.com/watch?v=QHOp16urp-k)
 
-|||||
----------- | ---------- | ---------- | ---------- |
-US | us-east-1 (N. Virginia) | ||
+## Highlighted features
+The solution utilized Amazon AI and Generative AI services for video metadata extraction and analysis, providing transparency into both architecture and cost levels. With key features:
+- Video search powered by full-text search, semantic embedding search ([Amazon Titan](https://aws.amazon.com/bedrock/titan) text embedding), and image search (Amazon Titan multimodal embedding).
+- Video Smart Sampling powered by Amazon Titan multimodal embedding for similarity analysis, effectively reducing redundant frames in samples, therefore optimized the cost.
+- Video frame summarization/captioning employing [Amazon Bedrock](https://aws.amazon.com/bedrock) Anthropic Claude 3 (Sonnet/Haiku).
+- Integration of LLMs + RAG (Amazon Bedrock LLMs and [Knowledge Bases](https://aws.amazon.com/bedrock/knowledge-bases/)) for dynamic policy evaluation and advanced analysis use cases.
+- Utilizing [Amazon Transcribe](https://aws.amazon.com/pm/transcribe) for audio to text transcription.
+- Utilizing [Amazon Rekognition](https://aws.amazon.com/rekognition/) Celebrity detection, Label detection, Moderation detection, Text extraction on the image frame level metadata extraction.
 
-## Prerequisites
-
-- If you don't have the AWS account administrator access, ensure your [IAM](https://aws.amazon.com/iam/) role/user has permissions to create and manage the necessary resources and components for this solution.
-- In Amazon Bedrock, make sure you have access to the required models. Refer to [this instruction](https://catalog.workshops.aws/building-with-amazon-bedrock/en-US/prerequisites/bedrock-setup) for detail.
-
-## Install environment dependencies and set up authentication
-
-<details><summary>
-:bulb: Skip if using CloudShell or AWS services that support bash commands from the same account (e.g., Cloud9). Required for self-managed environments like local desktops.
-</summary>
-
-- [ ] Install Node.js
-https://nodejs.org/en/download/
-
-- [ ] Install Python 3.8+
-https://www.python.org/downloads/
-
-- [ ] Install Git
-https://github.com/git-guides/install-git
-
-- [ ] Install Pip
-```sh
-python -m ensurepip --upgrade
-```
-
-- [ ] Install Python Virtual Environment
-```sh
-pip install virtualenv
-```
-
-
-- [ ] Setup the AWS CLI authentication
-```sh
-aws configure                                                                     
- ```                      
-</details>
-
-![Open CloudShell](static/cloudshell.png)
-
-If your CloudShell instance has older dependency libraries like npm or pip, it may cause deployment errors. To resolve this, click 'Actions' and choose 'Delete AWS CloudShell Home Directory' to start a fresh instance.
-
-### Deploy the CDK package using CloudShell
-1. Clone the source code from GitHub repo 
-```
-git clone https://github.com/aws-samples/media-analysis-policy-evaluation-framework.git
-cd media-analysis-policy-evaluation-framework
-```
-
-2. Set up environment variables 
-
-Set environment variables as input parameters for the CDK deployment package:
-
-CDK_INPUT_USER_EMAILS: Email address(es) for login to the web portal. They will receive temporary passwords.
-```
-export CDK_INPUT_USER_EMAILS=EMAILS_SPLIT_BY_COMMA
-```
-Update the values with your target AWS account ID and the region where you intend to deploy the demo application.
-```
-export CDK_DEFAULT_ACCOUNT=YOUR_ACCOUNT_ID
-export CDK_DEFAULT_REGION=YOUR_TARGET_REGION (e.x, us-east-1)
-```
-CDK_INPUT_OPENSEARCH_CONFIG: Configure the size of the Amazon OpenSearch cluster, accepting either "Dev" or "Prod" as values.
-- Dev: suitable for development or testing environment. (No master node, 1 data node: m5.large.search)
-- Prod: suitable for handling large volumes of video data. (3 master nodes: m4.small.search, 2 data nodes: m5.large.search=2)
-```
-export CDK_INPUT_OPENSEARCH_CONFIG=OPENSEARCH_CONFIG ("Dev" or "Prod", default value: "Dev")
-```
-
-
-3. Run **deploy-cloudshell.sh** in CloudShell to deploy the application to your AWS account with the parameters defined in step 2.
-```sh
-bash deploy-cloudshell.sh
-```
-
-### Access the Web Portal
-Once the deployment completes, you can find the website URL in the bash console. You can also find it in the CloudFormation console by checking the output in stack **AwsContentAnalysisRootStack**.
-
-An email with a username and temporary password will be sent to the email(s) you provided in step 2. Users can use this information to log in to the web portal.
-
-![CloudFormation stack output](static/cloudformation-stack-output.png)
-
-### Access OpenSearch Dashboard
-The solution deployed the OpenSearch service database into a private subnet. End users access the OpenSearch Dashboards via port forwarding in AWS Session Manager, eliminating the need to expose the SSH port to the internet.
-
-![CloudFormation stack output](static/opensearch-vpc-cdk.png)
-
-Run the following command to access OpenSearch Dashboards, after replacing <BastionHostId> and <OpenSearchDomainEndpoint> to the values output by cdk.
-```sh
-aws ssm start-session --target <BastionHostId> --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters '{"portNumber":["443"],"localPortNumber":["8157"], "host":["<OpenSearchDomainEndpoint>"]}'
-```
-After starting session, access https://localhost:8157/_dashboards in your browser. Warning may appear because the domain (*.[region].es.amazonaws.com) in the certificate is different from the domain (localhost) you access. Since this does not cause serious problems, continue accessing the site, and you will see OpenSearch Dashboards.
-
-Refer to this instruction on how to install Amazon Session Manager on your local machine: [instruction](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)
-
+In addition to its AI/GenAI capabilities, the solution also functioned as a framework with engineering features driven by AWS serverless architecture:
+- The solution includes a Web UI that streamlines video uploading, processing, and analysis.
+- A serverless backend workflow effectively handled video processing and sampling with a configurable concurrency with high availability.
+- Supports both fixed interval frame sampling and "Smart Sampling," which intelligently ignores similar frames to prevent redundant extraction and analysis.
+- Employing a micro-service architecture, backend subsystems can be deployed independently to facilitate system integration.
+- The flexible workflow design allows additional analysis at the video frame level. This included the integration of in-house trained or third-party ML models for analysis.
 
 ## Architecture
 The high-level workflow, as illustrated below, comprises a few major steps. 
@@ -133,3 +50,7 @@ Extracting metadata from media assets like video and audio is a common requireme
 ## Custom policy evaluation
 
 Customers need to evaluate their media assets against internal and external policies, which may include standard policies such as Trust & Safety, DEI, and industry-specific or company-specific policies. This solution introduces a flexible approach to managing policy evaluation using Bedrock LLMs. You can manage policy definitions via prompts engineering or by utilizing Bedrock Knowledge Base, a managed RAG (Retrieval Augmented Generation) solution. The demo UI includes a sandbox feature that allows users to flexibly adjust the metadata used for evaluation and review the evaluation results from LLMs.
+
+## Deployment instruction
+Follow this instruction to deploy the solution to your AWS account.
+[Deply all components, including the web portal](./deployment-instruction.md)
