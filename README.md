@@ -1,6 +1,6 @@
 # Media Analysis and Policy Evaluation Framework
 
-Customers in Media & Entertainment, Advertising, and Social Media require an effective solution for extracting metadata from media assets such as video, audio, and images. They also need flexible analysis options, including summarization and policy evaluation. This solution serves as a generic framework allowing users to streamline the extraction and evaluation processes.
+Customers in Media & Entertainment, Advertising, Social Media, Education and more insdustries require an effective solution for extracting metadata from media assets such as video, audio, and images. They also need flexible analysis options, including summarization and policy evaluation. This solution serves as a generic framework allowing users to streamline the extraction and evaluation processes.
 
 This solution is designed for two personas: business users and builders. 
 - Business users who seek to utilize a ready-made tool for media asset analysis and policy evaluation can take advantage of the built-in UI. They can upload videos, manage customized policy documents using Bedrock Knowledge Base, and apply flexible policy evaluation. 
@@ -12,6 +12,8 @@ This tool can be utilized for comprehensive video content analysis, encompassing
 - Customized policy evaluation
 - IAB classfication
 - Video summarization
+
+The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which you can deploy to your AWS account by following [these instructions](./deployment-instruction.md).
 
 ## Watch the demo video
 [![Demo video](./static/demo-video-thumbnail.png)](https://www.youtube.com/watch?v=QHOp16urp-k)
@@ -52,6 +54,6 @@ Extracting metadata from media assets like video and audio is a common requireme
 Customers need to evaluate their media assets against internal and external policies, which may include standard policies such as Trust & Safety, DEI, and industry-specific or company-specific policies. This solution introduces a flexible approach to managing policy evaluation using Bedrock LLMs. You can manage policy definitions via prompts engineering or by utilizing Bedrock Knowledge Base, a managed RAG (Retrieval Augmented Generation) solution. The demo UI includes a sandbox feature that allows users to flexibly adjust the metadata used for evaluation and review the evaluation results from LLMs.
 
 ## Deployment instruction
-Follow this instruction to deploy the solution to your AWS account.
+Follow this instruction to deploy the solution to your AWS account using CDK.
 
 [Deploy all components, including the web portal](./deployment-instruction.md)
