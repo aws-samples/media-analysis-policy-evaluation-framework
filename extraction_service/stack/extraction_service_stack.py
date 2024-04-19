@@ -157,9 +157,9 @@ class ExtractionServiceStack(NestedStack):
             capacity = opensearch.CapacityConfig(
                 multi_az_with_standby_enabled=True,
                 master_nodes=3,
-                master_node_instance_type="t4.medium.search",
+                master_node_instance_type="m4.large.search",
                 data_nodes=2,
-                data_node_instance_type="m5.large.search"
+                data_node_instance_type="m5.xlarge.search"
             )
             zone_awareness=opensearch.ZoneAwarenessConfig(
                 enabled=True,
@@ -236,7 +236,7 @@ class ExtractionServiceStack(NestedStack):
                 temp_password_validity=Duration.days(7)
             ),
             advanced_security_mode=_cognito.AdvancedSecurityMode.ENFORCED,
-            removal_policy=RemovalPolicy.DESTROY
+            removal_policy=RemovalPolicy.DESTROY,
         )
         self.cognito_user_pool_id = user_pool.user_pool_id
 

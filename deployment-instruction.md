@@ -54,8 +54,8 @@ If your CloudShell instance has older dependency libraries like npm or pip, it m
 
 (Please download the zip file, upload it to CloudShell, and unzip the folder for testing purposes if the repo is not published on GitHub yet.)
 ```
-git clone https://github.com/aws-samples/aws-content-analysis-and-policy-evaluation
-cd aws-content-analysis-and-policy-evaluation
+git clone https://github.com/aws-samples/media-analysis-policy-evaluation-framework
+cd media-analysis-policy-evaluation-framework
 ```
 
 2. Set up environment varaibles 
@@ -72,8 +72,8 @@ export CDK_DEFAULT_ACCOUNT=YOUR_ACCOUNT_ID
 export CDK_DEFAULT_REGION=YOUR_TARGET_REGION (e.x, us-east-1)
 ```
 (Optional) CDK_INPUT_OPENSEARCH_CONFIG: Configure the size of the Amazon OpenSearch cluster, accepting either "Dev" or "Prod" as values with a default value set to "Dev".
-- Dev: suitable for development or testing environment. (No master node, 1 data node: m5.large.search)
-- Prod: suitable for handling large volumes of video data. (3 master nodes: m4.small.search, 2 data nodes: m5.large=2)
+- Dev: suitable for development or testing environment. (No master node, 1 data node: m4.large.search)
+- Prod: suitable for handling large volumes of video data. (3 master nodes: m4.large.search, 2 data nodes: m5.xlarge.search)
 ```
 export CDK_INPUT_OPENSEARCH_CONFIG=OPENSEARCH_CONFIG ("Dev" or "Prod", default value: "Dev")
 ```
