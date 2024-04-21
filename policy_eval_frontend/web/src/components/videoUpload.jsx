@@ -441,92 +441,92 @@ class VideoUpload extends React.Component {
                             </Container>
                         ),
                         },
-                        {
-                        title: "LLMs evaluation settings",
-                        content: (
-                            <Container
-                            header={
-                                <Header variant="h2">
-                                LLMs evaluation settings
-                                </Header>
-                            }
-                            >
-                                <Toggle 
-                                    checked={this.state.noEvaluation} 
-                                    onChange={(e) => {
-                                        this.setState({noEvaluation: e.detail.checked});
-                                    }
-                                    }>
-                                    Skip evaluation
-                                </Toggle>                
+                        // {
+                        // title: "LLMs evaluation settings",
+                        // content: (
+                        //     <Container
+                        //     header={
+                        //         <Header variant="h2">
+                        //         LLMs evaluation settings
+                        //         </Header>
+                        //     }
+                        //     >
+                        //         <Toggle 
+                        //             checked={this.state.noEvaluation} 
+                        //             onChange={(e) => {
+                        //                 this.setState({noEvaluation: e.detail.checked});
+                        //             }
+                        //             }>
+                        //             Skip evaluation
+                        //         </Toggle>                
 
-                                    <br/>
-                                    Select a predefined policy template:
-                                    {this.state.selectedBedrockModel !== null?
-                                    <Select
-                                        selectedOption={this.state.selectedEvalTemplate}
-                                        onChange={({ detail }) =>
-                                            {
-                                                //console.log(detail.selectedOption.temp);
-                                                this.setState({
-                                                    selectedEvalTemplate: detail.selectedOption,
-                                                    promptsTemplate: detail.selectedOption.temp,
-                                                    selectedBedrockModel: {label:detail.selectedOption.modelId, value: detail.selectedOption.modelId},
-                                                })
-                                                if (detail.kbId !== undefined && detail.kbId !== null && detail.kbId.length > 0) 
-                                                    this.setState({selectedBedrockKb: {label:detail.kbId}})
-                                            }
-                                        }
-                                        options={this.llmParameters.templates.filter(item => item.type === "evaluation").map(item => ({
-                                            label: item.name,
-                                            //value: item.id,
-                                            temp: item.prompts_template,
-                                            modelId: item.bedrock_llm_model_id,
-                                            kbId: item.bedrock_knowledge_base_id
-                                        }))}
-                                        />:<div/>}
-                                    <br/>
-                                    Edit the prompts template:
-                                    <Textarea rows={20}
-                                        onChange={({ detail }) => {
-                                            //console.log(detail);
-                                            this.setState({promptsTemplate: detail.value});
-                                        }
-                                        }
-                                        value={this.state.promptsTemplate}
-                                        disableBrowserAutocorrect
-                                        placeholder="LLMs prompts template with placeholders"
-                                        />
-                                    <br/>
-                                    Select a Bedrock LLMs model for evaluation:
-                                    {this.llmParameters !== null?
-                                    <Select 
-                                        selectedOption={this.state.selectedBedrockModel}
-                                        onChange={({ detail }) => {
-                                            this.setState({selectedBedrockModel: detail.selectedOption})
-                                        }}
-                                        options={this.llmParameters.bedrock_model_ids.map(item => ({
-                                            label: item.name, value: item.value
-                                        }))}
-                                        />:<div/>}
-                                    <br/>
-                                    <div style={{display:"none"}}>
-                                    Choose a Bedrock Knowledge Base ID: 
-                                    (This is necessary for dynamically injecting policies managed in the Bedrock Knowledge Base and requires the use of the "##KB_POLICY##" placeholder in prompts template.)       
-                                    {this.llmParameters !== null?
-                                    <Select
-                                        selectedOption={this.state.selectedBedrockKb}
-                                        onChange={({ detail }) => this.setState({selectedBedrockKb: detail.selectedOption})}
-                                        options={this.llmParameters.bedrock_knowledge_bases.map(item => ({
-                                            label: item.name,
-                                            value: item.value
-                                        }))}
-                                        />:<div/>}
-                                    </div>
-                            </Container>
-                        ),
+                        //             <br/>
+                        //             Select a predefined policy template:
+                        //             {this.state.selectedBedrockModel !== null?
+                        //             <Select
+                        //                 selectedOption={this.state.selectedEvalTemplate}
+                        //                 onChange={({ detail }) =>
+                        //                     {
+                        //                         //console.log(detail.selectedOption.temp);
+                        //                         this.setState({
+                        //                             selectedEvalTemplate: detail.selectedOption,
+                        //                             promptsTemplate: detail.selectedOption.temp,
+                        //                             selectedBedrockModel: {label:detail.selectedOption.modelId, value: detail.selectedOption.modelId},
+                        //                         })
+                        //                         if (detail.kbId !== undefined && detail.kbId !== null && detail.kbId.length > 0) 
+                        //                             this.setState({selectedBedrockKb: {label:detail.kbId}})
+                        //                     }
+                        //                 }
+                        //                 options={this.llmParameters.templates.filter(item => item.type === "evaluation").map(item => ({
+                        //                     label: item.name,
+                        //                     //value: item.id,
+                        //                     temp: item.prompts_template,
+                        //                     modelId: item.bedrock_llm_model_id,
+                        //                     kbId: item.bedrock_knowledge_base_id
+                        //                 }))}
+                        //                 />:<div/>}
+                        //             <br/>
+                        //             Edit the prompts template:
+                        //             <Textarea rows={20}
+                        //                 onChange={({ detail }) => {
+                        //                     //console.log(detail);
+                        //                     this.setState({promptsTemplate: detail.value});
+                        //                 }
+                        //                 }
+                        //                 value={this.state.promptsTemplate}
+                        //                 disableBrowserAutocorrect
+                        //                 placeholder="LLMs prompts template with placeholders"
+                        //                 />
+                        //             <br/>
+                        //             Select a Bedrock LLMs model for evaluation:
+                        //             {this.llmParameters !== null?
+                        //             <Select 
+                        //                 selectedOption={this.state.selectedBedrockModel}
+                        //                 onChange={({ detail }) => {
+                        //                     this.setState({selectedBedrockModel: detail.selectedOption})
+                        //                 }}
+                        //                 options={this.llmParameters.bedrock_model_ids.map(item => ({
+                        //                     label: item.name, value: item.value
+                        //                 }))}
+                        //                 />:<div/>}
+                        //             <br/>
+                        //             <div style={{display:"none"}}>
+                        //             Choose a Bedrock Knowledge Base ID: 
+                        //             (This is necessary for dynamically injecting policies managed in the Bedrock Knowledge Base and requires the use of the "##KB_POLICY##" placeholder in prompts template.)       
+                        //             {this.llmParameters !== null?
+                        //             <Select
+                        //                 selectedOption={this.state.selectedBedrockKb}
+                        //                 onChange={({ detail }) => this.setState({selectedBedrockKb: detail.selectedOption})}
+                        //                 options={this.llmParameters.bedrock_knowledge_bases.map(item => ({
+                        //                     label: item.name,
+                        //                     value: item.value
+                        //                 }))}
+                        //                 />:<div/>}
+                        //             </div>
+                        //     </Container>
+                        // ),
                         
-                        },
+                        // },
                         {
                             title: "Upload vidoes and start analysis",
                             info: <Link variant="info">Info</Link>,

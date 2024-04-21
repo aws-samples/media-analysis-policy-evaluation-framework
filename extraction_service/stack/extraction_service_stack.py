@@ -23,6 +23,8 @@ from aws_cdk import (
     CfnResource,
     custom_resources,
     aws_logs as logs,
+    CfnCondition as condition,
+    CfnOutput
 )
 from aws_cdk.aws_apigateway import IdentitySource
 from aws_cdk.aws_kms import Key
@@ -49,6 +51,7 @@ class ExtractionServiceStack(NestedStack):
     bastion_host_id = None
     auth_mode = None
     api_key_value = None
+    opensearch_security_group = None
 
     s3_extraction_bucket = None
     cognito_authorizer = None
@@ -116,13 +119,13 @@ class ExtractionServiceStack(NestedStack):
             description="Allow inbound HTTPS traffic"
         )
 
-        opensearch_security_group = SecurityGroup(
+        self.opensearch_security_group = SecurityGroup(
             self, f"OpensearchSecurityGroup{self.instance_hash}",
             vpc=self.vpc,
             security_group_name=f"OpensearchSecurityGroup{self.instance_hash}",
         )
         # Add an ingress rule to allow traffic on port 443
-        opensearch_security_group.add_ingress_rule(
+        self.opensearch_security_group.add_ingress_rule(
             peer=ec2.Peer.any_ipv4(),
             connection=ec2.Port.tcp(int(OPENSEARCH_PORT)),
             description="Allow inbound HTTPS traffic"
@@ -142,33 +145,6 @@ class ExtractionServiceStack(NestedStack):
         )
 
         # OpenSearch domain
-        # Default - Dev setting
-        capacity = opensearch.CapacityConfig(
-                master_nodes=0,
-                master_node_instance_type="t3.small.search",
-                data_nodes=1,
-                data_node_instance_type="m4.large.search"
-            )
-        zone_awareness = None
-        subnets = [{
-                    'subnets': [self.vpc.private_subnets[0]],
-                }]
-        if self.opensearch_config == "Prod":
-            capacity = opensearch.CapacityConfig(
-                multi_az_with_standby_enabled=True,
-                master_nodes=3,
-                master_node_instance_type="m4.large.search",
-                data_nodes=2,
-                data_node_instance_type="m5.xlarge.search"
-            )
-            zone_awareness=opensearch.ZoneAwarenessConfig(
-                enabled=True,
-                availability_zone_count=2
-            )
-            subnets = [{
-                    'subnets': self.vpc.private_subnets,
-                }]
-
         self.opensearch_domain = opensearch.Domain(
             self, f"OpenSearchDomain{self.instance_hash}",
             domain_name=f'{OPENSEARCH_DOMAIN_NAME_PREFIX}{self.instance_hash}',
@@ -178,10 +154,21 @@ class ExtractionServiceStack(NestedStack):
             encryption_at_rest=opensearch.EncryptionAtRestOptions(enabled=True),
             vpc=self.vpc,
             removal_policy=RemovalPolicy.DESTROY,
-            security_groups=[opensearch_security_group],
-            capacity=capacity,
-            zone_awareness=zone_awareness,
-            vpc_subnets=subnets,
+            security_groups=[self.opensearch_security_group],
+            capacity=opensearch.CapacityConfig(
+                    master_nodes=self.opensearch_config["master_nodes"],
+                    master_node_instance_type=self.opensearch_config["master_node_instance_type"],
+                    data_nodes=self.opensearch_config["data_nodes"],
+                    data_node_instance_type=self.opensearch_config["data_node_instance_type"],
+                ),
+            ebs=opensearch.EbsOptions(
+                        volume_size=self.opensearch_config["ebs_volume_size_gb"],
+                        volume_type=ec2.EbsDeviceVolumeType.GP2
+                    ),
+            zone_awareness=None,
+            vpc_subnets=[{
+                    'subnets':  [item for item in self.vpc.private_subnets][:self.opensearch_config["subnets_count"]],
+                }],
             logging=opensearch.LoggingOptions(
                 slow_search_log_enabled=True,
                 slow_index_log_enabled=True
@@ -249,12 +236,11 @@ class ExtractionServiceStack(NestedStack):
         )
         self.cognito_app_client_id = web_client.user_pool_client_id
 
-        if self.auth_mode == "cognito_authorizer":
-            # Create API Gateway CognitioUeserPoolAuthorizer
-            self.cognito_authorizer = _apigw.CognitoUserPoolsAuthorizer(self, f"WebAuth{self.instance_hash}", 
-                cognito_user_pools=[user_pool],
-                identity_source=IdentitySource.header('Authorization')
-            )
+        # Create API Gateway CognitioUeserPoolAuthorizer
+        self.cognito_authorizer = _apigw.CognitoUserPoolsAuthorizer(self, f"WebAuth{self.instance_hash}", 
+            cognito_user_pools=[user_pool],
+            identity_source=IdentitySource.header('Authorization')
+        )
 
     def deploy_step_functino(self):
         # Create Lambda Layers which will be used by later Lambda deployment
@@ -649,7 +635,7 @@ class ExtractionServiceStack(NestedStack):
             removal_policy=RemovalPolicy.DESTROY,
             enforce_ssl=True,
             dead_letter_queue=_sqs.DeadLetterQueue(
-                max_receive_count=10,
+                max_receive_count=1000, #~8.3 hours (with 30 seconds retry)
                 queue=dl_queue
             )
         )
@@ -814,16 +800,15 @@ class ExtractionServiceStack(NestedStack):
                                 ),   
                             )
         
-        if self.auth_mode == "api_key":
-            plan = api.add_usage_plan("UsagePlan",
-                name="Easy",
-                throttle=_apigw.ThrottleSettings(
-                    rate_limit=10,
-                    burst_limit=2
-                )
+        plan = api.add_usage_plan("UsagePlan",
+            name="Easy",
+            throttle=_apigw.ThrottleSettings(
+                rate_limit=10,
+                burst_limit=2
             )
-            key = api.add_api_key("ApiKey")
-            plan.add_api_key(key)
+        )
+        key = api.add_api_key("ApiKey")
+        plan.add_api_key(key)
 
         # Create resources
         v1 = api.root.add_resource("v1")

@@ -4,7 +4,10 @@ from aws_cdk import CfnParameter as _cfnParameter
 from aws_cdk import Stack,CfnOutput
 from aws_cdk import aws_s3 as _s3
 from aws_cdk import Duration
-import uuid, os
+from aws_cdk import Fn, Token, CfnCondition
+from aws_cdk import aws_opensearchservice as opensearch, aws_ec2 as ec2
+
+import uuid, os, json
 from extraction_service.stack.extraction_service_pre_stack import ExtractionServicePreStack
 from extraction_service.stack.extraction_service_stack import ExtractionServiceStack
 from evaluation_service.stack.evaluation_service_stack import EvaluationServiceStack
@@ -19,14 +22,14 @@ env = cdk.Environment(
 class RootStack(Stack):
     instance_hash = None
     user_emails = None
-    input_opensearch_config = None
+    opensearch_config = None
     extraction_service_only = True
 
     def __init__(self, scope):
         super().__init__(scope, id="ContentAnalysisRootStack", env=env, description="Content analysis stack. Beta",
         )
-    
         self.instance_hash = ""#str(uuid.uuid4())[0:5]
+        self.opensearch_config = None
 
         # Inputs
         input_user_emails = _cfnParameter(self, "inputUserEmails", type="String",
@@ -35,13 +38,11 @@ class RootStack(Stack):
         if input_user_emails is not None:
             self.user_emails = input_user_emails.value_as_string
 
-        input_opensearch_config = _cfnParameter(self, "inputOpenSearchConfig", type="String",
-                                description="Configure Amazon OpenSearch cluster size. Allowed values: 'Dev', 'Prod'",
-                                default="Dev",
-                                allowed_values=["Dev","Prod"])
-        if input_opensearch_config is not None:
-            self.input_opensearch_config = input_opensearch_config.value_as_string
-
+        env_key = self.node.try_get_context("env")
+        if env_key is None:
+            env_key = "Dev"
+        self.opensearch_config = self.node.try_get_context(env_key)["opensearch"]
+        
         # Extraction service pre stack
         extraction_service_pre_stack = ExtractionServicePreStack(self, "ExtractionServicePreStack", description="Upsert OpenSearch ServiceLinkedRole to avoid conflict",
             instance_hash_code=self.instance_hash,
@@ -51,7 +52,7 @@ class RootStack(Stack):
         extraction_service_stack = ExtractionServiceStack(self, "ExtractionServiceStack", description="Deploy extraction backend services: VPC, OpenSearch, BastionHost, Cognito, API Gateway, Lambda, Step Functions, S3, etc.",
             instance_hash_code=self.instance_hash,
             timeout = Duration.hours(4),
-            opensearch_config = self.input_opensearch_config,
+            opensearch_config = self.opensearch_config,
             s3_bucket_name_extraction = extraction_service_pre_stack.s3_extraction_bucket_name
         )
         extraction_service_stack.node.add_dependency(extraction_service_pre_stack)
@@ -86,8 +87,6 @@ class RootStack(Stack):
         CfnOutput(self, "Cognito User Pool Id", value=extraction_service_stack.cognito_user_pool_id)
         CfnOutput(self, "Cognito App Client Id", value=extraction_service_stack.cognito_app_client_id)
         CfnOutput(self, "API Gateway Base URL: Extraction Service", value=extraction_service_stack.api_gw_base_url)
-
-
 
 app = cdk.App()
 root_stack = RootStack(app)

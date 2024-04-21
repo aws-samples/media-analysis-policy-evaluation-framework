@@ -37,6 +37,30 @@
       "@aws-cdk/aws-iam:importedRoleStackSafeDefaultPolicyName": true,
       "@aws-cdk/aws-s3:serverAccessLogsUseBucketPolicy": true,
       "@aws-cdk/aws-route53-patters:useCertificate": true,
-      "@aws-cdk/customresources:installLatestAwsSdkDefault": false
+      "@aws-cdk/customresources:installLatestAwsSdkDefault": false,
+      "Dev": {
+        "opensearch": {
+          "master_nodes": 0,
+          "master_node_instance_type": "t3.small.search",
+          "data_nodes": 1,
+          "data_node_instance_type": "m4.large.search",
+          "zone_awareness_enabled": false,
+          "availability_zone_count": null,
+          "ebs_volume_size_gb": 10,
+          "subnets_count": 1
+        }
+      },
+      "Prod": {
+        "opensearch": {
+          "master_nodes": 3,
+          "master_node_instance_type": "m4.large.search",
+          "data_nodes": 2,
+          "data_node_instance_type": "m5.xlarge.search",
+          "zone_awareness_enabled": true,
+          "availability_zone_count": 2,
+          "ebs_volume_size_gb": 100,
+          "subnets_count": 1
+        }
+      }
     }
   }
