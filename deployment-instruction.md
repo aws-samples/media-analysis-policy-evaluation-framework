@@ -52,7 +52,6 @@ If your CloudShell instance has older dependency libraries like npm or pip, it m
 ### Deploy the CDK package using CloudShell
 1. Clone the source code from GitHub repo 
 
-(Please download the zip file, upload it to CloudShell, and unzip the folder for testing purposes if the repo is not published on GitHub yet.)
 ```
 git clone https://github.com/aws-samples/media-analysis-policy-evaluation-framework
 cd media-analysis-policy-evaluation-framework
@@ -64,24 +63,24 @@ Set environment variables as input parameters for the CDK deployment package:
 
 CDK_INPUT_USER_EMAILS: Email address(es) for login to the web portal. They will receive temporary passwords.
 ```
-export CDK_INPUT_USER_EMAILS=EMAILS_SPLIT_BY_COMMA
+export CDK_INPUT_USER_EMAILS=<EMAILS_SPLIT_BY_COMMA>
 ```
 Update the values with your target AWS account ID and the region where you intend to deploy the demo application.
 ```
-export CDK_DEFAULT_ACCOUNT=YOUR_ACCOUNT_ID
-export CDK_DEFAULT_REGION=YOUR_TARGET_REGION (e.x, us-east-1)
+export CDK_DEFAULT_ACCOUNT=<YOUR_ACCOUNT_ID>
+export CDK_DEFAULT_REGION=<YOUR_TARGET_REGION> (e.x, us-east-1)
 ```
-(Optional) CDK_INPUT_OPENSEARCH_CONFIG: Configure the size of the Amazon OpenSearch cluster, accepting either "Dev" or "Prod" as values with a default value set to "Dev".
+CDK_INPUT_OPENSEARCH_CONFIG: Configure the size of the Amazon OpenSearch cluster, accepting either "Dev" or "Prod" as values with a default value set to "Dev".
 - Dev: suitable for development or testing environment. (No master node, 1 data node: m4.large.search)
 - Prod: suitable for handling large volumes of video data. (3 master nodes: m4.large.search, 2 data nodes: m5.xlarge.search)
 ```
-export CDK_INPUT_OPENSEARCH_CONFIG=OPENSEARCH_CONFIG ("Dev" or "Prod", default value: "Dev")
+export CDK_INPUT_OPENSEARCH_CONFIG=<OPENSEARCH_CONFIG> ("Dev" or "Prod")
 ```
 
 
 3. Run **deploy-cloudshell.sh** in CloudShell to deploy the application to your AWS account with the parameters defined in step 2.
 ```sh
-bash deploy-cloudshell.sh
+bash ./deploy-cloudshell.sh
 ```
 
 ### Access the Web Portal
