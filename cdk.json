@@ -47,7 +47,8 @@
           "zone_awareness_enabled": false,
           "availability_zone_count": null,
           "ebs_volume_size_gb": 10,
-          "subnets_count": 1
+          "subnets_count": 1,
+          "default_vpc_cidr": "172.31.0.0/16"
         }
       },
       "Prod": {
@@ -59,7 +60,8 @@
           "zone_awareness_enabled": true,
           "availability_zone_count": 2,
           "ebs_volume_size_gb": 100,
-          "subnets_count": 1
+          "subnets_count": 1,
+          "default_vpc_cidr": "172.31.0.0/16"
         }
       }
     }

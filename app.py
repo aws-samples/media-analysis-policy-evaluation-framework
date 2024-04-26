@@ -39,7 +39,7 @@ class RootStack(Stack):
             self.user_emails = input_user_emails.value_as_string
 
         env_key = self.node.try_get_context("env")
-        if env_key is None:
+        if env_key is None or len(env_key) == 0:
             env_key = "Dev"
         self.opensearch_config = self.node.try_get_context(env_key)["opensearch"]
         
