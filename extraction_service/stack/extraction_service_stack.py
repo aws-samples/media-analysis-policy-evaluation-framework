@@ -93,7 +93,8 @@ class ExtractionServiceStack(NestedStack):
                     name="Private",
                     subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS
                 )
-            ]
+            ],
+            ip_addresses=ec2.IpAddresses.cidr(self.opensearch_config["default_vpc_cidr"])
         )
 
         # Create a flow log
