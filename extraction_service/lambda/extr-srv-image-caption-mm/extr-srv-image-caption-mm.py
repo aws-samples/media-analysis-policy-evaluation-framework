@@ -111,7 +111,48 @@ def lambda_handler(event, context):
 def get_subtitle_by_ts(task_id, ts):
     if ts is None:
         return None
-    
+    # Find the previous timestamp
+    request = {
+      "_source": ["timestamp"],
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "range": {
+                "timestamp": {
+                  "lt": ts
+                }
+              }
+            }
+          ]
+        }
+      },
+      "sort": [
+        {
+          "_script": {
+            "type": "number",
+            "script": {
+              "source": "Math.abs(doc['timestamp'].value - params.timestamp)",
+              "params": {
+                "timestamp": ts
+              }
+            },
+            "order": "asc"
+          }
+        }
+      ],
+      "size": 1 
+    }   
+    prev_ts = 0
+    try:
+        response = opensearch_client.search(
+            index=OPENSEARCH_INDEX_PREFIX_VIDEO_FRAME + task_id,
+            body=request
+        )
+        prev_ts = response["hits"]["hits"][0]["_source"]["timestamp"]
+    except Exception as ex:
+        print(ex)
+
     request = {
                   "_source": ["inner_hits"],
                   "query": {
@@ -124,7 +165,7 @@ def get_subtitle_by_ts(task_id, ts):
                               "bool": {
                                 "must": [
                                   {"range": {"subtitles.start_ts": { "lte": ts }}},
-                                  {"range": {"subtitles.end_ts": {"gte": ts}}}
+                                  {"range": {"subtitles.end_ts": {"gte": prev_ts}}}
                                 ]
                               }
                             },
@@ -146,9 +187,11 @@ def get_subtitle_by_ts(task_id, ts):
         )
 
     try:
+        result = ""
         if "hits" in response and len(response["hits"]["hits"]) > 0:
-            trans = response["hits"]["hits"][0]["inner_hits"]["subtitles"]["hits"]["hits"][0]["_source"]["transcription"]
-            return trans
+            for trans in response["hits"]["hits"][0]["inner_hits"]["subtitles"]["hits"]["hits"]:
+                result += trans["_source"]["transcription"]
+            return result
     except Exception as ex:
         print(ex)
         
