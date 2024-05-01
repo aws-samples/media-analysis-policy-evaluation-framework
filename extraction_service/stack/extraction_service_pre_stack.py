@@ -67,7 +67,7 @@ class ExtractionServicePreStack(NestedStack):
     def deploy_provision(self):
 
         aws_layer = _lambda.LayerVersion.from_layer_version_arn(self, "AwsLayerPowerTool", 
-            layer_version_arn="arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2:68"
+            layer_version_arn=f"arn:aws:lambda:{self.region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:68"
         )
 
         # Custom Resource Lambda: extr-srv-extr-provision
