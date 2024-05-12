@@ -55,18 +55,11 @@ def lambda_handler(event, context):
     # Store to DB
     doc = {
         "Request": event,
-        "Status": "start_transcription",
         "RequestTs": datetime.now(timezone.utc),
         "MetaData": {
             "TrasnscriptionOutput": None if event["ExtractionSetting"]["Transcription"] == False else f's3://{TRANSCRIBE_OUTPUT_BUCKET}/{transcribe_output_key}'
         }
     }
-    response = opensearch_client.index(
-            index = OPENSEARCH_INDEX_NAME_VIDEO_TASK,
-            body = doc,
-            id = task_id,
-            refresh = True
-        )
 
     if event["ExtractionSetting"]["Transcription"]:
         transcribe.start_transcription_job(
@@ -80,11 +73,21 @@ def lambda_handler(event, context):
                                 'OutputStartIndex': 1 
                             }
                         ) 
+        doc["Status"] = "start_transcription"
     else:
         # Start stepfunction workflow if no transcription required
         stepfunctions.start_execution(
             stateMachineArn=STEP_FUNCTIONS_STATE_MACHINE_ARN,
-            input=json.dumps(event)
+            input=json.dumps({"Request":event})
+        )
+        doc["Status"] = "enqueu"
+
+    # Update DB
+    response = opensearch_client.index(
+            index = OPENSEARCH_INDEX_NAME_VIDEO_TASK,
+            body = doc,
+            id = task_id,
+            refresh = True
         )
         
     return {

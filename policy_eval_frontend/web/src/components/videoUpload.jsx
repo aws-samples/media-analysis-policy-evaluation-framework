@@ -433,7 +433,7 @@ class VideoUpload extends React.Component {
                                             Detect Logo (Amazon Titan Anthropic Claude V3 Sonnet)
                                         </Checkbox> */}
                                         <Checkbox checked={this.state.enableImageCaption} onChange={(e)=>this.setState({enableImageCaption: e.detail.checked})}>
-                                            Image description (Amazon Titan Anthropic Claude V3 Haiku)
+                                            Image description (Amazon Bedrock Anthropic Claude V3 Haiku)
                                         </Checkbox>
                                     </ColumnLayout>
                                 </Container>

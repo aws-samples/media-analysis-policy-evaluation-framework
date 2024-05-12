@@ -90,13 +90,13 @@ class VideoAnalysis extends React.Component {
             trans = this.state.item.Transcription.subtitles.map(item => item.transcription).join(' ');
 
         let p = prompts.replace("##TRANSCRIPTION##", trans === null? "": trans);
-        p = p.replace("##SUBTITLE##", JSON.stringify(this.state.item.Transcription.subtitles));
-        p = p.replace("##LABEL##", JSON.stringify(this.state.item.DetectLabel.Items, "Label"));
-        p = p.replace("##LOGO##", JSON.stringify(this.state.item.DetectLogo.Items, "Logo"));
-        p = p.replace("##TEXT##", JSON.stringify(this.state.item.DetectText.Items, "Text"));
-        p = p.replace("##CELEBRITY##", JSON.stringify(this.state.item.DetectCelebrity.Items, "Celebrity"));
-        p = p.replace("##MODERATION##", JSON.stringify(this.state.item.DetectModeration.Items, "Moderation"));
-        p = p.replace("##IMAGECAPTION##", JSON.stringify(this.state.item.ImageCaption.Items, "Moderation"));
+        p = p.replace("##SUBTITLE##", this.state.item.Transcription?JSON.stringify(this.state.item.Transcription.subtitles):"");
+        p = p.replace("##LABEL##", this.state.item.DetectLabel?JSON.stringify(this.state.item.DetectLabel.Items, "Label"):"");
+        p = p.replace("##LOGO##", this.state.item.DetectLogo?JSON.stringify(this.state.item.DetectLogo.Items, "Logo"):"");
+        p = p.replace("##TEXT##", this.state.item.DetectText?JSON.stringify(this.state.item.DetectText.Items, "Text"):"");
+        p = p.replace("##CELEBRITY##", this.state.item.DetectCelebrity?JSON.stringify(this.state.item.DetectCelebrity.Items, "Celebrity"):"");
+        p = p.replace("##MODERATION##", this.state.item.DetectModeration?JSON.stringify(this.state.item.DetectModeration.Items, "Moderation"):"");
+        p = p.replace("##IMAGECAPTION##", this.state.item.ImageCaption?JSON.stringify(this.state.item.ImageCaption.Items, "Moderation"):"");
         return p;
     }
     handleEvaluation = (e) => {

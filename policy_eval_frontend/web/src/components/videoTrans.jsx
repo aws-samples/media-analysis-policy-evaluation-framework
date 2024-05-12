@@ -69,14 +69,14 @@ class VideoTrans extends React.Component {
                 {this.state.item !== null && this.state.item !== undefined?
                 <div>
                     <ExpandableSection headerText="Full transcription">
-                    <div className="content">{this.state.item.Transcription.subtitles.map(i => i.transcription).join(' ')}</div>
+                    <div className="content">{this.state.item.Transcription && this.state.item.Transcription.subtitles.map(i => i.transcription).join(' ')}</div>
                     </ExpandableSection>
 
                     <div className='title'>Language code </div>
-                    <div className="content">{this.state.item.Transcription.language_code}</div>
+                    <div className="content">{this.state.item.Transcription && this.state.item.Transcription.language_code}</div>
                     <br/>
                     <div className='title'>Subtitles</div>
-                   {this.state.item.Transcription.subtitles.map((l,i)=>{
+                   {this.state.item.Transcription && this.state.item.Transcription.subtitles.map((l,i)=>{
                             return  <div key={`subtitle_${l.start_ts}`} className='subtitle' onClick={() => {this.handleSubtitleClick(l.start_ts)}}>
                                 <div className="time">{DecimalToTimestamp(l.start_ts)}</div>
                                 <div className="trans">{l.transcription}</div>
