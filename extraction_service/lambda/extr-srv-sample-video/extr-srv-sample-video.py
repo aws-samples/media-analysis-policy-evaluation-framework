@@ -86,6 +86,8 @@ def lambda_handler(event, context):
 
     # First iteration: generate thumbnail and get video metadata
     if sample_start_s == 0:
+        if "MetaData" not in event:
+            event["MetaData"] = {}
         event["MetaData"]["VideoMetaData"] = get_video_metadata(video_clip, event, local_file_path)
     
     if sample_start_s >= video_duration:
