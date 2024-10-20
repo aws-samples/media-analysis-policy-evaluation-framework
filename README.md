@@ -39,6 +39,17 @@ The solution automatically extracts metadata from both the visual and audio aspe
 - As raw extraction files (in JSON and text file formats) stored in S3.
 - Via RESTful APIs with pagination for accessing the extracted data.
 
+The extraction service allows you to customize the extraction process, including:
+- Sample frequency
+- Smart sampling
+- Which ML features are applied at the frame level
+- Whether to enable audio transcription
+- Whether to perform shot and scene analysis. 
+
+This flexibility gives users control over the workflow, enabling only the necessary features to optimize costs and processing times. Below is a screenshot of the extraction configuration page. The same settings can also be configured via the RESTful API.
+![Extraction Configuration](./assets/extraction-config.png)
+
+
 #### Video Extraction Data
 - **Video Frames**
 
