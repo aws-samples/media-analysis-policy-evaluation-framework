@@ -1,4 +1,4 @@
-# Guidance for Media Extraction and Dynamic Content Policy Evaluation Framework on AWS
+# Media Analysis and Policy Evaluation Framework - V2
 
 ## Table of Content
 
