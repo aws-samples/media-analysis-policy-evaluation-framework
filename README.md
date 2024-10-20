@@ -22,13 +22,9 @@
 
 Organizations across media and entertainment, advertising, social media, education, and other sectors require efficient solutions to extract information from videos and apply flexible evaluations based on their policies. Generative artificial intelligence (AI) has unlocked fresh opportunities for these use cases. This solution uses AWS AI and generative AI services to provide a framework to streamline video extraction and evaluation processes.
 
-### Architecture Overview
+It helps users extract video metadata from both visual and audio elements, offering granularity at the video frame, shot, and scene levels. Users can then focus on analyzing the video based on this extracted dataset to unlock additional business value.
 
-The high-level workflow, as illustrated below, comprises a few major steps. 
-- The user uploads media content (currently supporting videos). The application initiates pre-processing, extracting image frames from the video, and applies extraction for each image frame using Amazon Rekognition and Amazon Bedrock. 
-- It extracts audio transcription using Amazon Transcribe. 
-- It applies LLMs analysis based on the metadata extracted from the video. The LLMs analysis stage is flexible and offers a web UI for users to modify the prompts for better accuracy.
-![moderator UI](./assets/workflow.png)
+### Architecture Overview
 
 The solution can be deployed to your AWS account as a CDK package with a serverless architecture. It consists of three loosely coupled microservices:
 
