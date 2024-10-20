@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 
 DYNAMO_EVAL_TASK_TABLE = os.environ.get("DYNAMO_EVAL_TASK_TABLE")
 BEDROCK_REGION = os.environ.get("BEDROCK_REGION", os.environ['AWS_REGION'])
+BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3 = os.environ.get("BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3")
+BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3_MODEL_VERSION = os.environ.get("BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3_MODEL_VERSION")
 
 bedrock_runtime = boto3.client('bedrock-runtime', region_name=BEDROCK_REGION)
 
@@ -41,7 +43,7 @@ def lambda_handler(event, context):
 
     status, result = None, None
     try:
-        if llm_model_id.startswith("anthropic.claude-3-sonnet"):
+        if llm_model_id.startswith(BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3):
             result = call_bedrock_llm_sonnet(prompts, llm_model_id, max_tokens_to_sample, temperature, top_k, top_p)
         else:
             result = call_bedrock_llm(prompts, llm_model_id, max_tokens_to_sample, temperature, top_k, top_p)
@@ -63,7 +65,7 @@ def lambda_handler(event, context):
 
 def call_bedrock_llm_sonnet (prompt, llm_model_id, max_tokens_to_sample, temperature, top_k, top_p):
     body = json.dumps({
-            "anthropic_version": "bedrock-2023-05-31",
+            "anthropic_version": BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3_MODEL_VERSION,
             "max_tokens": max_tokens_to_sample,
             "messages": [
               {

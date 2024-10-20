@@ -329,6 +329,7 @@ class EvaluationServiceStack(NestedStack):
                 'DYNAMO_EVAL_TASK_TABLE': DYNAMO_EVAL_TASK_TABLE,
                 'SQS_URL': self.eval_task_sqs.queue_url,
                 'BEDROCK_REGION': self.bedrock_region,
+                'BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3': BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3
             },
         )
 

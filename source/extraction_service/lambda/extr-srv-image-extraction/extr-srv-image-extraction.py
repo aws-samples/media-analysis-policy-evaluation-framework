@@ -19,6 +19,8 @@ REK_MIN_CONF_DETECT_TEXT = float(os.environ.get("REK_MIN_CONF_DETECT_TEXT"))
 REK_MIN_CONF_DETECT_CELEBRITY = float(os.environ.get("REK_MIN_CONF_DETECT_CELEBRITY"))
 REKOGNITION_REGION = os.environ.get("REKOGNITION_REGION", os.environ['AWS_REGION'])
 BEDROCK_REGION = os.environ.get("BEDROCK_REGION", os.environ['AWS_REGION'])
+BEDROCK_ANTHROPIC_CLAUDE_HAIKU = os.environ.get('BEDROCK_ANTHROPIC_CLAUDE_HAIKU')
+BEDROCK_ANTHROPIC_CLAUDE_HAIKU_MODEL_VERSION = os.environ.get('BEDROCK_ANTHROPIC_CLAUDE_HAIKU_MODEL_VERSION')
 
 DYNAMO_VIDEO_TASK_TABLE = os.environ.get("DYNAMO_VIDEO_TASK_TABLE")
 DYNAMO_VIDEO_FRAME_TABLE = os.environ.get("DYNAMO_VIDEO_FRAME_TABLE")
@@ -231,7 +233,7 @@ def bedrock_image_caption(s3_bucket, s3_key, caption_prompts, max_retries=3, ret
                 # Call Bedrock Anthropic Claude V3 Sonnet
                 body = json.dumps(
                     {
-                        "anthropic_version": "bedrock-2023-05-31",
+                        "anthropic_version": BEDROCK_ANTHROPIC_CLAUDE_HAIKU_MODEL_VERSION,
                         "max_tokens": 1000,
                         "messages": [
                             {
@@ -256,7 +258,7 @@ def bedrock_image_caption(s3_bucket, s3_key, caption_prompts, max_retries=3, ret
                 
                 response = bedrock.invoke_model(
                     body=body, 
-                    modelId="anthropic.claude-3-haiku-20240307-v1:0", 
+                    modelId=BEDROCK_ANTHROPIC_CLAUDE_HAIKU, 
                     accept="application/json", 
                     contentType="application/json",
                 )

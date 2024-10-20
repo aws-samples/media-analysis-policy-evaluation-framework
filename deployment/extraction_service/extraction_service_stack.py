@@ -460,11 +460,6 @@ class ExtractionServiceStack(NestedStack):
                     ),              
                     _iam.PolicyStatement(
                         effect=_iam.Effect.ALLOW,
-                        actions=["bedrock:InvokeModel"],
-                        resources=["arn:aws:bedrock:*::foundation-model/amazon.titan*", "arn:aws:bedrock:*::foundation-model/anthropic.*"]
-                    ),
-                    _iam.PolicyStatement(
-                        effect=_iam.Effect.ALLOW,
                         actions=["rekognition:DetectModerationLabels", "rekognition:DetectFaces", "rekognition:DetectLabels", "rekognition:DetectText", "rekognition:RecognizeCelebrities"],
                         resources=["*"]
                     ),
@@ -584,7 +579,8 @@ class ExtractionServiceStack(NestedStack):
                 'DYNAMO_VIDEO_TASK_TABLE': DYNAMO_VIDEO_TASK_TABLE,
                 'DYNAMO_VIDEO_TRANS_TABLE': DYNAMO_VIDEO_TRANS_TABLE,
                 'DYNAMO_VIDEO_FRAME_TABLE': DYNAMO_VIDEO_FRAME_TABLE,
-                'BEDROCK_REGION': self.bedrock_region
+                'BEDROCK_REGION': self.bedrock_region,
+                'BEDROCK_TITAN_MULTIMODEL_EMBEDDING_MODEL_ID': BEDROCK_TITAN_MULTIMODEL_EMBEDDING_MODEL_ID
             },
             role=lambda_extration_srv_sample_video_dedup_role,
             layers=[self.opensearch_layer],
@@ -656,7 +652,8 @@ class ExtractionServiceStack(NestedStack):
                 'DYNAMO_VIDEO_TASK_TABLE': DYNAMO_VIDEO_TASK_TABLE,
                 'DYNAMO_VIDEO_TRANS_TABLE': DYNAMO_VIDEO_TRANS_TABLE,
                 'DYNAMO_VIDEO_FRAME_TABLE': DYNAMO_VIDEO_FRAME_TABLE,
-                'VIDEO_SAMPLE_FILE_PREFIX': VIDEO_SAMPLE_FILE_PREFIX
+                'VIDEO_SAMPLE_FILE_PREFIX': VIDEO_SAMPLE_FILE_PREFIX,
+                'BEDROCK_TITAN_MULTIMODEL_EMBEDDING_MODEL_ID': BEDROCK_TITAN_MULTIMODEL_EMBEDDING_MODEL_ID
             },
             role=lambda_extration_srv_sample_video_dedup_faiss_role,
             layers=[self.langchain_layer]
@@ -715,15 +712,17 @@ class ExtractionServiceStack(NestedStack):
             timeout=Duration.seconds(900),
             role=lambda_extration_srv_image_extraction_role,
             environment={
-             'REKOGNITION_REGION': self.rekognition_region,
-             'DYNAMO_VIDEO_TASK_TABLE': DYNAMO_VIDEO_TASK_TABLE,
-             'DYNAMO_VIDEO_FRAME_TABLE': DYNAMO_VIDEO_FRAME_TABLE,
-             'DYNAMO_VIDEO_TRANS_TABLE': DYNAMO_VIDEO_TRANS_TABLE,
-             'REK_MIN_CONF_DETECT_CELEBRITY': REK_MIN_CONF_DETECT_CELEBRITY,
-             'REK_MIN_CONF_DETECT_MODERATION': REK_MIN_CONF_DETECT_MODERATION,
-             'REK_MIN_CONF_DETECT_TEXT': REK_MIN_CONF_DETECT_TEXT,
-             'REK_MIN_CONF_DETECT_LABEL': REK_MIN_CONF_DETECT_LABEL,
-             'BEDROCK_REGION': self.bedrock_region
+                'REKOGNITION_REGION': self.rekognition_region,
+                'DYNAMO_VIDEO_TASK_TABLE': DYNAMO_VIDEO_TASK_TABLE,
+                'DYNAMO_VIDEO_FRAME_TABLE': DYNAMO_VIDEO_FRAME_TABLE,
+                'DYNAMO_VIDEO_TRANS_TABLE': DYNAMO_VIDEO_TRANS_TABLE,
+                'REK_MIN_CONF_DETECT_CELEBRITY': REK_MIN_CONF_DETECT_CELEBRITY,
+                'REK_MIN_CONF_DETECT_MODERATION': REK_MIN_CONF_DETECT_MODERATION,
+                'REK_MIN_CONF_DETECT_TEXT': REK_MIN_CONF_DETECT_TEXT,
+                'REK_MIN_CONF_DETECT_LABEL': REK_MIN_CONF_DETECT_LABEL,
+                'BEDROCK_REGION': self.bedrock_region,
+                'BEDROCK_ANTHROPIC_CLAUDE_HAIKU': BEDROCK_ANTHROPIC_CLAUDE_HAIKU,
+                'BEDROCK_ANTHROPIC_CLAUDE_HAIKU_MODEL_VERSION': BEDROCK_ANTHROPIC_CLAUDE_HAIKU_MODEL_VERSION
             },
         )
 
@@ -945,7 +944,9 @@ class ExtractionServiceStack(NestedStack):
                 'DYNAMO_VIDEO_ANALYSIS_TABLE': DYNAMO_VIDEO_ANALYSIS_TABLE,
                 'DYNAMO_VIDEO_FRAME_TABLE': DYNAMO_VIDEO_FRAME_TABLE,
                 'BEDROCK_REGION': self.bedrock_region,
-                'EXTR_SRV_S3_BUCKET': self.s3_bucket_name_extraction
+                'EXTR_SRV_S3_BUCKET': self.s3_bucket_name_extraction,
+                'BEDROCK_ANTHROPIC_CLAUDE_HAIKU': BEDROCK_ANTHROPIC_CLAUDE_HAIKU,
+                'BEDROCK_ANTHROPIC_CLAUDE_HAIKU_MODEL_VERSION': BEDROCK_ANTHROPIC_CLAUDE_HAIKU_MODEL_VERSION
             },
         )
 
@@ -1004,7 +1005,10 @@ class ExtractionServiceStack(NestedStack):
                 'DYNAMO_VIDEO_ANALYSIS_TABLE': DYNAMO_VIDEO_ANALYSIS_TABLE,
                 'DYNAMO_VIDEO_FRAME_TABLE': DYNAMO_VIDEO_FRAME_TABLE,
                 'BEDROCK_REGION': self.bedrock_region,
-                'EXTR_SRV_S3_BUCKET': self.s3_bucket_name_extraction
+                'EXTR_SRV_S3_BUCKET': self.s3_bucket_name_extraction,
+                'BEDROCK_ANTHROPIC_CLAUDE_SONNET_V35': BEDROCK_ANTHROPIC_CLAUDE_SONNET_V35,
+                'BEDROCK_ANTHROPIC_CLAUDE_HAIKU': BEDROCK_ANTHROPIC_CLAUDE_HAIKU,
+                'BEDROCK_ANTHROPIC_CLAUDE_HAIKU_MODEL_VERSION': BEDROCK_ANTHROPIC_CLAUDE_HAIKU_MODEL_VERSION
             },
         )
         

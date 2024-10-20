@@ -10,6 +10,7 @@ DYNAMO_VIDEO_FRAME_TABLE = os.environ.get("DYNAMO_VIDEO_FRAME_TABLE")
 DYNAMO_VIDEO_TASK_TABLE = os.environ.get("DYNAMO_VIDEO_TASK_TABLE")
 VIDEO_FRAME_SIMILAIRTY_THRESHOLD = float(os.environ.get("VIDEO_FRAME_SIMILAIRTY_THRESHOLD","0.1"))
 VIDEO_SAMPLE_FILE_PREFIX = os.environ.get("VIDEO_SAMPLE_FILE_PREFIX")
+BEDROCK_TITAN_MULTIMODEL_EMBEDDING_MODEL_ID = os.environ.get("BEDROCK_TITAN_MULTIMODEL_EMBEDDING_MODEL_ID")
 
 s3 = boto3.client('s3')
 bedrock = boto3.client('bedrock-runtime', region_name=BEDROCK_REGION) 
@@ -142,7 +143,7 @@ def get_mm_vector(base64_encoded_image, input_text=None):
     try:
         response = bedrock.invoke_model(
             body=body, 
-            modelId="amazon.titan-embed-image-v1", 
+            modelId=BEDROCK_TITAN_MULTIMODEL_EMBEDDING_MODEL_ID, 
             accept="application/json", 
             contentType="application/json"
         )
