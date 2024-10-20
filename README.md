@@ -1,4 +1,4 @@
-# Media Analysis and Policy Evaluation Framework - V2
+# Media Analysis and Policy Evaluation Framework
 
 ## Table of Content
 
