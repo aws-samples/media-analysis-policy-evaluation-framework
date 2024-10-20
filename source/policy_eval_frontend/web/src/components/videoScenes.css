@@ -1,0 +1,56 @@
+.videoscenes {
+    padding-left: 10px;
+    height: 100%;
+    width: 100%;
+}
+.videoscenes .total {
+    font-weight: bold;
+    font-size: large;
+}
+
+.videoscenes .scenes {
+    max-height: 1000px;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.videoscenes .scene {
+    display: inline-block;
+    margin: 5px;
+}
+.videoscenes .scene:hover {
+    background-color: rgb(239, 239, 239);
+    cursor: pointer;
+}
+.videoscenes .scene .summary {
+    color: gray;
+    padding: 5px;
+}
+.videoscenes .scene .ts{
+    padding: 5px;
+    color: gray;
+}
+
+.videoscenes .scene img{
+    width:100%;
+}
+
+.videoscenes .scene .frame .label {
+    display: block;
+    font-size: small;
+    color:gray;
+    float: right;
+    padding-right: 5px;
+}
+
+.videoscenes .pager {
+    display: block;
+    float: right;
+}
+
+.videoscenes .scenes .scene .frame {
+    border: solid 1px lightgray;
+    display: inline-block;
+    margin: 2px;
+    width: 30%;
+}

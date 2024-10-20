@@ -1,24 +1,39 @@
-# Media Analysis and Policy Evaluation Framework
+# Guidance for Media Extraction and Dynamic Content Policy Evaluation Framework on AWS
 
-Customers in Media & Entertainment, Advertising, Social Media, Education and more industries require an effective solution for extracting metadata from media assets such as video, audio, and images. They also need flexible analysis options, including summarization and policy evaluation. This solution serves as a generic framework allowing users to streamline the extraction and evaluation processes.
+## Table of Content
 
-This solution is designed for two personas: business users and builders. 
-- Business users who seek to utilize a ready-made tool for media asset analysis and policy evaluation can take advantage of the built-in UI. They can upload videos, manage customized policy documents using Bedrock Knowledge Base, and apply flexible policy evaluation. 
-- For builders in search of a modular solution for video extraction, user/face mapping, and LLMs analysis, they can deploy the backend micro-service independently and integrate it into their workflow.
+1. [Overview](#overview)
+    - [Architecture Overview](#architecture-overview)
+    - [Highlighted features](#highlighted-features)
+    - [Cost](#cost)
+2. [Prerequisites](#prerequisites)
+    - [Install environment dependencies and set up authentication](#install-environment-dependencies-and-set-up-authentication)
+    - [Service limits](#service-limits)
+    - [Supported Regions](#supported-regions)
+3. [Deployment Steps](#deployment-steps)
+4. [Deployment Validation](#deployment-validation)
+5. [Running the Guidance](#running-the-guidance)
+6. [Cleanup](#cleanup)
+7. [Known Issues](#known-issues)
+8. [Notices](#notices)
+9. [Authors](#authors)
 
-This tool can be utilized for comprehensive video content analysis, encompassing but not limited to:
-- Content Moderation
-- DEI detection
-- Customized policy evaluation
-- IAB classfication
-- Video summarization
+## Overview
 
-The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which you can deploy to your AWS account by following [these instructions](./deployment-instruction.md).
+Organizations across media and entertainment, advertising, social media, education, and other sectors require efficient solutions to extract information from videos and apply flexible evaluations based on their policies. Generative artificial intelligence (AI) has unlocked fresh opportunities for these use cases. This solution uses AWS AI and generative AI services to provide a framework to streamline video extraction and evaluation processes.
 
-## Watch the demo video
-[![Demo video](./static/demo-video-thumbnail.png)](https://www.youtube.com/watch?v=QHOp16urp-k)
+### Architecture Overview
 
-## Highlighted features
+The high-level workflow, as illustrated below, comprises a few major steps. 
+- The user uploads media content (currently supporting videos). The application initiates pre-processing, extracting image frames from the video, and applies extraction for each image frame using Amazon Rekognition and Amazon Bedrock. 
+- It extracts audio transcription using Amazon Transcribe. 
+- It applies LLMs analysis based on the metadata extracted from the video. The LLMs analysis stage is flexible and offers a web UI for users to modify the prompts for better accuracy.
+![moderator UI](./assets/workflow.png)
+
+The solution embraces microservice design principles, with frontend and backend services decoupled, allowing each component to be deployed independently as a microservice without dependencies. This architecture enables flexible extension of the solution. For example, adding a new user/face tagging backend service would not impact the policy evaluation service.
+![configureation UI](./assets/guidance-diagram.png)
+
+### Highlighted features
 The solution utilized Amazon AI and Generative AI services for video metadata extraction and analysis, providing transparency into both architecture and cost levels. With key features:
 - Video search powered by full-text search, semantic embedding search ([Amazon Titan](https://aws.amazon.com/bedrock/titan) text embedding), and image search (Amazon Titan multimodal embedding).
 - Video Smart Sampling powered by Amazon Titan multimodal embedding for similarity analysis, effectively reducing redundant frames in samples, therefore optimized the cost.
@@ -34,26 +49,137 @@ In addition to its AI/GenAI capabilities, the solution also functioned as a fram
 - Employing a micro-service architecture, backend subsystems can be deployed independently to facilitate system integration.
 - The flexible workflow design allows additional analysis at the video frame level. This included the integration of in-house trained or third-party ML models for analysis.
 
-## Architecture
-The high-level workflow, as illustrated below, comprises a few major steps. 
-- The user uploads media content (currently supporting videos). The application initiates pre-processing, extracting image frames from the video, and applies extraction for each image frame using Amazon Rekognition and Amazon Bedrock. 
-- It extracts audio transcription using Amazon Transcribe. 
-- It applies LLMs analysis based on the metadata extracted from the video. The LLMs analysis stage is flexible and offers a web UI for users to modify the prompts for better accuracy.
-![moderator UI](static/workflow.png)
 
-The solution embraces microservice design principles, with frontend and backend services decoupled, allowing each component to be deployed independently as a microservice without dependencies. This architecture enables flexible extension of the solution. For example, adding a new user/face tagging backend service would not impact the policy evaluation service.
-![configureation UI](static/guidance-diagram.png)
+### Cost
 
-## Metadata extraction
-Extracting metadata from media assets like video and audio is a common requirement for enabling downstream analysis and search capabilities. This solution includes a core module that supports generic metadata extraction from media assets, encompassing both audio transcription and visual metadata extraction. The visual extraction feature adopts a flexible sampling configuration, allowing users to set the sample frequency, with more advanced sampling logic forthcoming. For each image frame, users can apply flexible extraction logic, such as Rekognition label detection, Rekognition moderation, Rekognition celebrity detection, Rekognition text extraction, Bedrock Titan multimodal embedding, and Bedrock Anthropic Claude V3 Sonnet image captioning, with the capability to extend support to additional video frame-level analysis. Audio transcription leverages Amazon Transcribe, providing full transcription and subtitles.
+You are responsible for the cost of the AWS services used while running this Guidance. There are several factors can impact the monthly cost. 
+- Amazon OpenSearch Service (OpenSearch) cluster settings: OpenSearch will incur a monthly cost. Choosing the 'Dev' option will deploy a cluster with a single data node. For production workloads, you can choose the 'Prod' setting to support a larger volume of searches.
+- Enabling smart sampling: The solution utilizes Amazon Titan Multimodal embedding to deduplicate image frames sampled from the video. Enabling smart sampling typically reduces the number of sampled frames, thereby lowering extraction costs.
+- Choose the AI/GenAI features for frame metadata extraction: Selecting fewer AI features (Amazon Rekognition and Amazon Bedrock Anthropic Claude V3 Haiku) in the video extraction configuration will reduce costs.
+- Enabling audio transcription: The solution uses Amazon Transcribe to convert the audio of the video into text. You can disable audio transcription for videos that don't require audio extraction to reduce costs.
 
-![Extraction Service Architecture](static/extraction-service-architecture.png)
+Below are a few sample cost estimations in USD for extracting 1,000 minutes of video per month in the us-east-1 region:
+- **~$350**: OpenSearch (Dev), enabled smart sampling (50% sample rate), enabled all the visual extraction features, enabled audio transcription.
+- **~$280**: OpenSearch (Dev), enabled smart sampling (50% sample rate), enabled visual extraction features: Label detection, moderation detection, text extraction, image caption, disabled audio transcription.
 
-## Custom policy evaluation
+For production workloads, you can reach out to your AWS account team for a more detailed cost estimation.
 
-Customers need to evaluate their media assets against internal and external policies, which may include standard policies such as Trust & Safety, DEI, and industry-specific or company-specific policies. This solution introduces a flexible approach to managing policy evaluation using Bedrock LLMs. You can manage policy definitions via prompts engineering or by utilizing Bedrock Knowledge Base, a managed RAG (Retrieval Augmented Generation) solution. The demo UI includes a sandbox feature that allows users to flexibly adjust the metadata used for evaluation and review the evaluation results from LLMs.
+## Prerequisites
 
-## Deployment instruction
-Follow this instruction to deploy the solution to your AWS account using CDK.
+- If you don't have the AWS account administrator access, ensure your [IAM](https://aws.amazon.com/iam/) role/user has permissions to create and manage the necessary resources and components for this solution.
+- Please check the numbers of VPCs already launched in the account region where you plan to deploy the solution. The default quota for VPCs per region in the us-east-1 is 5. If the VPCs limit has already been reached in the region, you will need to increase the quota limit (+1) before deployment. You can manage the quota increase yourself using the AWS console by navigating to the ["Service Quotas" page](https://us-east-1.console.aws.amazon.com/servicequotas/home?region=us-east-1).
+- In Amazon Bedrock, make sure you have access to the required models. Refer to [this instruction](https://catalog.workshops.aws/building-with-amazon-bedrock/en-US/prerequisites/bedrock-setup) for detail.
 
-[Deploy all components, including the web portal](./deployment-instruction.md)
+### Install environment dependencies and set up authentication
+
+<details><summary>
+:bulb: Skip if using CloudShell or AWS services that support bash commands from the same account (e.g., Cloud9). Required for self-managed environments like local desktops.
+</summary>
+
+- [ ] Install Node.js
+https://nodejs.org/en/download/
+
+- [ ] Install Python 3.8+
+https://www.python.org/downloads/
+
+- [ ] Install Git
+https://github.com/git-guides/install-git
+
+- [ ] Install Pip
+```sh
+python -m ensurepip --upgrade
+```
+
+- [ ] Install Python Virtual Environment
+```sh
+pip install virtualenv
+```
+
+
+- [ ] Setup the AWS CLI authentication
+```sh
+aws configure                                                                     
+ ```                      
+</details>
+
+![Open CloudShell](./assets/cloudshell.png)
+
+If your CloudShell instance has older dependency libraries like npm or pip, it may cause deployment errors. To resolve this, click 'Actions' and choose 'Delete AWS CloudShell Home Directory' to start a fresh instance.
+
+### Service limits
+The solution processes videos and extracts video frames concurrently. The number of videos and frames that can be processed in parallel depends on the related AI services quota in the deployed region. Some quotas can be increased upon request. Ensure that the following service quotas meet the requirements before increasing the extraction concurrency settings.
+Amazon Rekognition, Amazon Bedrock, Amazon Transcribe
+
+### Supported Regions
+The solution requires AWS AI and Generative AI services, including Amazon Bedrock, Amazon Rekognition and Amazon Transcribe, which are available in certain regions. Please choose one of the below AWS regions to deploy the CDK package.
+
+|||||
+---------- | ---------- | ---------- | ---------- |
+US | us-east-1 (N. Virginia) | us-west-2 (Oregon) ||
+
+The solution requires access to Amazon Bedrock Foundation Models (FMs): Titan multimodal embedding, Titan text embedding, Anthropic Claude V3 models. If you are deploying the solution stack in other regions, such as Europe (Ireland), you can still try out the Amazon Bedrock FM models by choosing the model access in one of these regions: us-east-1, us-west-2 in the source/cdk.json file. Keep in mind that there will be additional Data Transfer cost across regions.
+
+## Deployment Steps
+1. Clone the source code from GitHub repo 
+
+```
+git clone git@github.com:aws-solutions-library-samples/guidance-for-media-extraction-and-dynamic-content-policy-evaluation-framework-on-aws.git
+cd guidance-for-media-extraction-and-dynamic-content-policy-evaluation-framework-on-aws
+```
+
+2. Set up environment varaibles 
+
+Set environment variables as input parameters for the CDK deployment package:
+
+CDK_INPUT_USER_EMAILS: Email address(es) for login to the web portal. They will receive temporary passwords.
+```
+export CDK_INPUT_USER_EMAILS=<EMAILS_SPLIT_BY_COMMA>
+```
+Update the values with your target AWS account ID and the region where you intend to deploy the demo application.
+```
+export CDK_DEFAULT_ACCOUNT=<YOUR_ACCOUNT_ID>
+export CDK_DEFAULT_REGION=<YOUR_TARGET_REGION> (e.x, us-east-1)
+```
+CDK_INPUT_OPENSEARCH_CONFIG: Configure the size of the Amazon OpenSearch cluster, accepting either "Dev" or "Prod" as values with a default value set to "Dev".
+- Dev: suitable for development or testing environment. (No master node, 1 data node: m4.large.search)
+- Prod: suitable for handling large volumes of video data. (3 master nodes: m4.large.search, 2 data nodes: m5.xlarge.search)
+```
+export CDK_INPUT_OPENSEARCH_CONFIG=<OPENSEARCH_CONFIG> ("Dev" or "Prod")
+```
+
+3. Run **deploy-cloudshell.sh** in CloudShell to deploy the application to your AWS account with the parameters defined in step 2.
+```
+cd deployment
+bash ./deploy-cloudshell.sh
+```
+
+## Deployment Validation
+
+Once the deployment completes, you can find the website URL in the bash console. You can also find it in the CloudFormation console by checking the output in stack **VideoAnalysisRootStack**.
+
+![CloudFormation stack output](./assets/cloudformation-stack-output.png)
+
+## Running the Guidance
+An email with a username and temporary password will be sent to the email(s) you provided in deployment steps. Users can use this information to log in to the web portal.
+
+## Cleanup
+
+When you’re finished experimenting with this solution, clean up your resources by running the command from CloudShell:
+
+```
+cdk destroy
+```
+
+These commands deletes resources deploying through the solution. 
+You can also go to the CloudFormation console, select the VideoAnalysisRootStack stack, and click the Delete button to remove all the resources.
+
+## Known issues
+For deployments in regions other than us-east-1, the web UI may not function properly for video uploads. This issue should resolve itself within an hour.
+
+## Notices
+
+*Customers are responsible for making their own independent assessment of the information in this Guidance. This Guidance: (a) is for informational purposes only, (b) represents AWS current product offerings and practices, which are subject to change without notice, and (c) does not create any commitments or assurances from AWS and its affiliates, suppliers or licensors. AWS products or services are provided “as is” without warranties, representations, or conditions of any kind, whether express or implied. AWS responsibilities and liabilities to its customers are controlled by AWS agreements, and this Guidance is not part of, nor does it modify, any agreement between AWS and its customers.*
+
+## Authors
+
+Lana Zhang (lanaz@amazon.com)

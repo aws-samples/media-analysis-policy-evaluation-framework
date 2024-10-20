@@ -1,0 +1,59 @@
+.videodetail {
+    vertical-align: top;
+}
+
+.videodetail .close {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    display: block;
+    float: right;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.videodetail .video {
+    display: inline-block;
+    width: 48%;
+}
+.videodetail .video .taskid {
+    font-size: xx-small;
+    color: lightgray;
+}
+.videodetail .video .title {
+    font-size: large;
+    color: gray;
+    padding-top: 10px;
+}
+
+.videodetail .video .timestamp {
+    font-size: small;
+    color: gray;
+}
+
+.videodetail .video .processing {
+    font-size: small;
+    color: silver;
+}
+.videodetail .video video {
+    width: 100%;
+}
+
+.videodetail .detail {
+    display: inline-block;
+    vertical-align: top;
+    width: 48%;
+    height: 100%;
+    border-left: solid 1px lightgray;
+    margin-left: 10px;
+}
+.videodetail .smartsample {
+    margin: 40px 0px 10px 0px;
+}
+.videodetail .close {
+    display: block;
+    border:solid 2px gray;
+    border-radius: 10px;
+    padding: 5px 5px 0px 5px;
+    float: left;
+}

@@ -1,5 +1,4 @@
 ** opensearch-py; version 2.0.0 -- https://github.com/opensearch-project/opensearch-py
-** SMARTBEAR Swagger UI; version 5.15.2 -- https://www.npmjs.com/package/swagger-ui
  
                                  Apache License
                            Version 2.0, January 2004
