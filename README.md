@@ -57,13 +57,13 @@ The solution automatically extracts metadata from both the visual and audio aspe
 
 - **Video Shots**
 
-    A cluster of adjacent video frames representing a camera movement. The following metadata is available for video shots:
+    A continuous sequence of frames captured by a single camera without interruption. The following metadata is available for video shots:
     - Shot Start and End Timestamps: The exact time range of the shot.
     - Shot Summary: A summary of the shot, generated based on the frame summaries and audio transcription using the Amazon Bedrock Anthropic Claude V3 Haiku model.
 
 - **Video Scenes**
 
-    A cluster of shots and audio chapters representing a logical unit of the video, such as a movie scene or a segment of an interview focused on one subject. The following metadata is available for scenes:
+    A continuous sequence of shots and audio chapters representing a logical unit of the video, such as a movie scene or a segment of an interview focused on one subject. The following metadata is available for scenes:
     - Scene Start and End Timestamps: The exact time range of the scene.
     - Scene Summary: A summary of the scene, generated from shot summaries and audio transcriptions using the Amazon Bedrock Anthropic Claude V3 Sonnet model.
 
