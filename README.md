@@ -30,25 +30,51 @@ The high-level workflow, as illustrated below, comprises a few major steps.
 - It applies LLMs analysis based on the metadata extracted from the video. The LLMs analysis stage is flexible and offers a web UI for users to modify the prompts for better accuracy.
 ![moderator UI](./assets/workflow.png)
 
-The solution embraces microservice design principles, with frontend and backend services decoupled, allowing each component to be deployed independently as a microservice without dependencies. This architecture enables flexible extension of the solution. For example, adding a new user/face tagging backend service would not impact the policy evaluation service.
+The solution can be deployed to your AWS account as a CDK package with a serverless architecture. It consists of three loosely coupled microservices:
+
+- **Web UI**: This allows users to upload videos, extract metadata, and apply dynamic analysis in a self-serve manner. It is a static React application hosted on [AWS S3](https://aws.amazon.com/s3/) as a static website, with [Amazon CloudFront](https://aws.amazon.com/cloudfront/) for content distribution, [Amazon Cognito](https://aws.amazon.com/cognito/) user pool, and [Amazon Amplify](https://aws.amazon.com/amplify/) for authentication.
+- **Extraction Service**: The core component of the solution that manages the video metadata extraction workflow. It supports concurrency management, high availability, and flexible configuration. The extracted data is accessible via S3 and RESTful APIs. It is built using [Amazon Step Functions](https://aws.amazon.com/step-functions/), [Amazon API Gateway](https://aws.amazon.com/api-gateway/), [AWS Lambda](https://aws.amazon.com/lambda/), [Amazon DynamoDB](https://aws.amazon.com/dynamodb/), [Amazon OpenSearch Service](https://aws.amazon.com/opensearch-service/), [Amazon SQS](https://aws.amazon.com/sqs/), [Amazon SNS](https://aws.amazon.com/sns/), Amazon S3, and [Amazon VPC](https://aws.amazon.com/vpc/).
+- **Evaluation Service**: A lightweight component that helps users construct GenAI prompts and easily run evaluation tasks through the Web UI. It includes sample prompt templates for video content moderation, summarization, and IAB classification, demonstrating how to leverage Generative AI for flexible video analysis based on the Extraction Service output. This is a serverless application utilizing Amazon API Gateway, AWS Lambda, [Amazon Bedrock](https://aws.amazon.com/bedrock/), and Amazon DynamoDB.
+
 ![configureation UI](./assets/guidance-diagram.png)
 
 ### Highlighted features
-The solution utilized Amazon AI and Generative AI services for video metadata extraction and analysis, providing transparency into both architecture and cost levels. With key features:
-- Video search powered by full-text search, semantic embedding search ([Amazon Titan](https://aws.amazon.com/bedrock/titan) text embedding), and image search (Amazon Titan multimodal embedding).
-- Video Smart Sampling powered by Amazon Titan multimodal embedding for similarity analysis, effectively reducing redundant frames in samples, therefore optimized the cost.
-- Video frame summarization/captioning employing [Amazon Bedrock](https://aws.amazon.com/bedrock) Anthropic Claude 3 (Sonnet/Haiku).
-- Integration of LLMs + RAG (Amazon Bedrock LLMs and [Knowledge Bases](https://aws.amazon.com/bedrock/knowledge-bases/)) for dynamic policy evaluation and advanced analysis use cases.
-- Utilizing [Amazon Transcribe](https://aws.amazon.com/pm/transcribe) for audio to text transcription.
-- Utilizing [Amazon Rekognition](https://aws.amazon.com/rekognition/) Celebrity detection, Label detection, Moderation detection, Text extraction on the image frame level metadata extraction.
+The solution automatically extracts metadata from both the visual and audio aspects of a video. The metadata is accessible in two ways:
+- As raw extraction files (in JSON and text file formats) stored in S3.
+- Via RESTful APIs with pagination for accessing the extracted data.
 
-In addition to its AI/GenAI capabilities, the solution also functioned as a framework with engineering features driven by AWS serverless architecture:
-- The solution includes a Web UI that streamlines video uploading, processing, and analysis.
-- A serverless backend workflow effectively handled video processing and sampling with a configurable concurrency with high availability.
-- Supports both fixed interval frame sampling and "Smart Sampling," which intelligently ignores similar frames to prevent redundant extraction and analysis.
-- Employing a micro-service architecture, backend subsystems can be deployed independently to facilitate system integration.
-- The flexible workflow design allows additional analysis at the video frame level. This included the integration of in-house trained or third-party ML models for analysis.
+#### Video Extraction Data
+- **Video Frames**
 
+    Image frames are sampled from the video based on the provided sampling interval, with "smart sampling" enabled to remove adjacent similar image frames utilizing Amazon Bedrock [Titan](https://aws.amazon.com/bedrock/titan) Multimodal Embedding and Vector DB similarity search, optimizing costs and reducing processing time. The following metadata is generated at the frame level:
+    - Timestamp: The exact time the frame was captured from the video.
+    - Labels: Thousands of generic labels detected using [Amazon Rekognition](https://aws.amazon.com/rekognition/)’s [DetectLabels API](https://docs.aws.amazon.com/rekognition/latest/dg/labels-detect-labels-image.html).
+    - Text: Text in images extracted using Amazon Rekognition’s [DetectText API](https://docs.aws.amazon.com/rekognition/latest/dg/text-detection.html).
+    - Celebrity: Well known faces detected using Amazon Rekognition’s [DetectCelebrities API](https://docs.aws.amazon.com/rekognition/latest/dg/celebrities.html).
+    - Content Moderation Labels: unsafe and inappropriate content classified using Amazon Rekognition’s [DetectModerationLabels API](https://docs.aws.amazon.com/rekognition/latest/dg/moderation.html).
+    - Image Summary: Generic description of the image, generated using the Amazon Bedrock [Anthropic Claude](https://aws.amazon.com/bedrock/claude) V3 Haiku model.
+    - Text embedding and multimodal embedding: Vectors generated using [Amazon Bedrock Titan](https://aws.amazon.com/bedrock/titan) Multimodal and text embedding models to support semantic search and image search.
+
+- **Video Shots**
+
+    A cluster of adjacent video frames representing a camera movement. The following metadata is available for video shots:
+    - Shot Start and End Timestamps: The exact time range of the shot.
+    - Shot Summary: A summary of the shot, generated based on the frame summaries and audio transcription using the Amazon Bedrock Anthropic Claude V3 Haiku model.
+
+- **Video Scenes**
+
+    A cluster of shots and audio chapters representing a logical unit of the video, such as a movie scene or a segment of an interview focused on one subject. The following metadata is available for scenes:
+    - Scene Start and End Timestamps: The exact time range of the scene.
+    - Scene Summary: A summary of the scene, generated from shot summaries and audio transcriptions using the Amazon Bedrock Anthropic Claude V3 Sonnet model.
+
+- **Audio Transcripts**
+    - Subtitle Start and End Timestamps: The time range of each subtitle segment.
+    - Audio Transcription: Generated using [Amazon Transcribe](https://aws.amazon.com/pm/transcribe).
+
+### Customize the Extraction Service
+The Extraction Service is the core component of the solution and can serve as a foundational building block for integration into existing workflows. It operates independently of the other microservices in the architecture. Its serverless design also makes it easy to extend and integrate with in-house trained or third-party ML models. For example, in the implementation diagram below, users can make minor modifications to the Lambda functions within the frame iteration subflow to incorporate additional ML models, enabling richer extraction results.
+
+![Extraction Service](./assets/extraction-service-diagram.png)
 
 ### Cost
 
@@ -59,8 +85,8 @@ You are responsible for the cost of the AWS services used while running this Gui
 - Enabling audio transcription: The solution uses Amazon Transcribe to convert the audio of the video into text. You can disable audio transcription for videos that don't require audio extraction to reduce costs.
 
 Below are a few sample cost estimations in USD for extracting 1,000 minutes of video per month in the us-east-1 region:
-- **~$350**: OpenSearch (Dev), enabled smart sampling (50% sample rate), enabled all the visual extraction features, enabled audio transcription.
-- **~$280**: OpenSearch (Dev), enabled smart sampling (50% sample rate), enabled visual extraction features: Label detection, moderation detection, text extraction, image caption, disabled audio transcription.
+- **~$350** monthly: OpenSearch (Dev), enabled smart sampling (50% sample rate), enabled all the visual extraction features, enabled audio transcription.
+- **~$280** monthly: OpenSearch (Dev), enabled smart sampling (50% sample rate), enabled visual extraction features: Label detection, moderation detection, text extraction, image caption, disabled audio transcription.
 
 For production workloads, you can reach out to your AWS account team for a more detailed cost estimation.
 
