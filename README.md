@@ -23,7 +23,18 @@
 
 Organizations across media and entertainment, advertising, social media, education, and other sectors require efficient solutions to extract information from videos and apply flexible evaluations based on their policies. Generative artificial intelligence (AI) has unlocked fresh opportunities for these use cases. This solution uses AWS AI and generative AI services to provide a framework to streamline video extraction and evaluation processes.
 
-It helps users extract video metadata from both visual and audio elements, offering granularity at the video frame, and shot levels. Users can then focus on analyzing the video based on this extracted dataset to unlock additional business value.
+This solution is designed for two personas: business users and builders. 
+- Business users who seek to utilize a ready-made tool for media asset analysis and policy evaluation can take advantage of the built-in UI. They can upload videos, manage customized policy documents using Bedrock Knowledge Base, and apply flexible policy evaluation. 
+- For builders in search of a modular solution for video extraction, user/face mapping, and LLMs analysis, they can deploy the backend micro-service independently and integrate it into their workflow.
+
+This tool can be utilized for comprehensive video content analysis, encompassing but not limited to:
+- Content Moderation
+- Customized policy evaluation
+- IAB classfication
+- Video summarization
+- Video scene detection
+
+The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which you can deploy to your AWS account by following the [instruction](#deployment-steps).
 
 ### Architecture Overview
 
