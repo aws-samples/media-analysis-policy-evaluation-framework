@@ -100,10 +100,9 @@ You are responsible for the cost of the AWS services used while running this Gui
 - Choose the AI/GenAI features for frame metadata extraction: Selecting fewer AI features (Amazon Rekognition and Amazon Bedrock Anthropic Claude V3 Haiku) in the video extraction configuration will reduce costs.
 - Enabling audio transcription: The solution uses Amazon Transcribe to convert the audio of the video into text. You can disable audio transcription for videos that don't require audio extraction to reduce costs.
 
-Below are a few sample cost estimations in USD for extracting 1,000 minutes of video per month in the us-east-1 region:
-- **~$350** (35 cents per minute) monthly: OpenSearch (Dev), 1 FPS (Frame Per Second) sample rate, enabled smart sampling (50% sample rate), enabled all the visual extraction features, enabled audio transcription.
-- **~$280** (28 cents per minute) monthly: OpenSearch (Dev), 1 FPS sample rate,, enabled smart sampling (50% sample rate), enabled visual extraction features: Label detection, moderation detection, text extraction, image caption, disabled audio transcription.
-- **~$160** (16 cents per minute) monthly: without OpenSearch (no vector search supported), 0.2 FPS (every 5 seconds) sample rate, enabled smart sampling (50% sample rate), enabled all the visual extraction features, enabled audio transcription.
+- **~$350** monthly (35 cents per minute): OpenSearch (Dev), 1 FPS (Frame Per Second) sample rate, enabled smart sampling (50% sample rate), enabled all the visual extraction features, enabled audio transcription.
+- **~$280** monthly (28 cents per minute): OpenSearch (Dev), 1 FPS sample rate,, enabled smart sampling (50% sample rate), enabled visual extraction features: Label detection, moderation detection, text extraction, image caption, disabled audio transcription.
+- **~$160** monthly (16 cents per minute): without OpenSearch (no vector search supported), 0.2 FPS (every 5 seconds) sample rate, enabled smart sampling (50% sample rate), enabled all the visual extraction features, enabled audio transcription.
 
 
 For production workloads, you can reach out to your AWS account team for a more detailed cost estimation.
