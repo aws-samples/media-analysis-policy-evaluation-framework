@@ -50,7 +50,7 @@
           "subnets_count": 1,
           "default_vpc_cidr": "172.28.0.0/16"
         },
-        "bedrock_region": "us-east-1"
+        "bedrock_region": null
       },
       "Prod": {
         "opensearch": {
