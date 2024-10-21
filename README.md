@@ -32,11 +32,13 @@ This tool can be utilized for comprehensive video content analysis, encompassing
 - Customized policy evaluation, including DEI, grooming, and other tailored business rules. 
 - IAB/GARM classification.
 - Video summarization.
+- Video shot detection.
 - Video scene analysis and ad break detection.
 
 The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which you can deploy to your AWS account by following the [instruction](#deployment-steps).
 
-[![Demo video](./assets/screenshot-shot.png)]
+#### A screenshot of the Video Shot Insights page
+![Demo video](./assets/screenshot-shot.png)
 
 ### Architecture Overview
 
