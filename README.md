@@ -28,7 +28,7 @@ This solution is designed for two personas: business users and builders.
 
 
 This tool can be utilized for comprehensive video content analysis, encompassing but not limited to:
-- Content Moderation.
+- Content moderation.
 - Customized policy evaluation, including DEI, grooming, and other tailored business rules. 
 - IAB/GARM classification.
 - Video summarization.
@@ -223,7 +223,7 @@ These commands deletes resources deploying through the solution.
 You can also go to the CloudFormation console, select the VideoAnalysisRootStack stack, and click the Delete button to remove all the resources.
 
 ## Known issues
-For deployments in regions other than us-east-1, the web UI may not function properly for video uploads. This issue should resolve itself within an hour.
+For deployments in regions other than us-east-1, the web UI may experience issues with video uploads immediately after deployment due to S3 multipart uploads. This issue should resolve itself within an hour.
 
 ## Notices
 
