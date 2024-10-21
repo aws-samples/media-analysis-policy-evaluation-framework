@@ -50,16 +50,16 @@ The solution can be deployed to your AWS account as a CDK package with a serverl
 ![configureation UI](./assets/guidance-diagram.png)
 
 ### Highlighted features
-The main component of the solution helps users extract video metadata from both visual and audio sources to meet downstream dynamic analysis needs. The extracted video data is accessible in two ways:
-- As raw extraction files (in JSON and text file formats) stored in S3.
+The main component of the solution enables users to extract video metadata from both visual and audio sources to support downstream dynamic analysis needs. The extracted video data will be accessible through the built-in UI for review, and it can also be accessed programmatically for system integration in the following two ways:
+- Via S3 as raw extraction files (in JSON and text file formats).
 - Via RESTful APIs.
 
 The extraction service allows you to customize the extraction process, including:
 - Sample frequency
-- Wheter to enable Smart Sampling
-- Which ML features are applied at the frame level
+- Whether to enable Smart Sampling (remove similiar frames)
+- Which ML features are applied at the frame level extraction (label, text, celebrity, moderation and image summary)
 - Whether to enable audio transcription
-- Whether to perform shot analysis
+- Whether to perform shot analysis with summarization
 
 This flexibility gives users control over the workflow, enabling only the necessary features to optimize costs and processing times. Below is a screenshot of the extraction configuration page. The same settings can also be configured via the RESTful API.
 ![Extraction Configuration](./assets/extraction-config.png)
