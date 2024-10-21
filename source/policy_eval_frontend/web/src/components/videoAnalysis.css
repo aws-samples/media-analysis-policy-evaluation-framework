@@ -4,7 +4,9 @@
     width: 100%;
     overflow-y: auto;
 }
-
+.videoanalysis .warn{
+    float: right;
+}
 .modalfooterleft {
     display: block;
     float: left;

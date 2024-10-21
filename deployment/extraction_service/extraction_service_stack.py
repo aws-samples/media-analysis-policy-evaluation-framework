@@ -1026,7 +1026,7 @@ class ExtractionServiceStack(NestedStack):
             sm_json = sm_json.replace("##LAMBDA_ES_IMAGE_EMBEDDING_SAVE##", f"arn:aws:lambda:{self.region}:{self.account_id}:function:extr-srv-image-vector-save{self.instance_hash}")
             sm_json = sm_json.replace("##LAMBDA_ES_AGG##", f"arn:aws:lambda:{self.region}:{self.account_id}:function:extr-srv-aggregate-extracted-label{self.instance_hash}")
             sm_json = sm_json.replace("##LAMBDA_ES_SHOT_ANALYSIS##", f"arn:aws:lambda:{self.region}:{self.account_id}:function:extr-srv-shot-analysis{self.instance_hash}")
-            sm_json = sm_json.replace("##LAMBDA_ES_SCENE_ANALYSIS##", f"arn:aws:lambda:{self.region}:{self.account_id}:function:extr-srv-scene-analysis{self.instance_hash}")
+            #sm_json = sm_json.replace("##LAMBDA_ES_SCENE_ANALYSIS##", f"arn:aws:lambda:{self.region}:{self.account_id}:function:extr-srv-scene-analysis{self.instance_hash}")
             sm_json = sm_json.replace("##VIDEO_IMAGE_EXTRACTION_CONCURRENT_LIMIT##", VIDEO_IMAGE_EXTRACTION_CONCURRENT_LIMIT)
             sm_json = sm_json.replace("##VIDEO_IMAGE_EXTRACTION_SAMPLE_CONCURRENT_LIMIT##", VIDEO_IMAGE_EXTRACTION_SAMPLE_CONCURRENT_LIMIT)
 
@@ -1481,9 +1481,11 @@ class ExtractionServiceStack(NestedStack):
                         resources=[
                             f"arn:aws:dynamodb:{self.region}:{self.account_id}:table/{DYNAMO_VIDEO_TASK_TABLE}/index/*",
                             f"arn:aws:dynamodb:{self.region}:{self.account_id}:table/{DYNAMO_VIDEO_FRAME_TABLE}/index/*",
+                            f"arn:aws:dynamodb:{self.region}:{self.account_id}:table/{DYNAMO_VIDEO_ANALYSIS_TABLE}/index/*",
                             f"arn:aws:dynamodb:{self.region}:{self.account_id}:table/{DYNAMO_VIDEO_TASK_TABLE}",
                             f"arn:aws:dynamodb:{self.region}:{self.account_id}:table/{DYNAMO_VIDEO_TRANS_TABLE}",
-                            f"arn:aws:dynamodb:{self.region}:{self.account_id}:table/{DYNAMO_VIDEO_FRAME_TABLE}"
+                            f"arn:aws:dynamodb:{self.region}:{self.account_id}:table/{DYNAMO_VIDEO_FRAME_TABLE}",
+                            f"arn:aws:dynamodb:{self.region}:{self.account_id}:table/{DYNAMO_VIDEO_ANALYSIS_TABLE}"
                         ]
                     ) 
                 ]
@@ -1496,6 +1498,7 @@ class ExtractionServiceStack(NestedStack):
             evns={
                 'DYNAMO_VIDEO_TASK_TABLE': DYNAMO_VIDEO_TASK_TABLE,
                 'DYNAMO_VIDEO_TRANS_TABLE': DYNAMO_VIDEO_TRANS_TABLE,
+                'DYNAMO_VIDEO_FRAME_TABLE': DYNAMO_VIDEO_FRAME_TABLE,
                 'DYNAMO_VIDEO_FRAME_TABLE': DYNAMO_VIDEO_FRAME_TABLE,
                 'S3_PRESIGNED_URL_EXPIRY_S':S3_PRE_SIGNED_URL_EXPIRY_S,
             })        

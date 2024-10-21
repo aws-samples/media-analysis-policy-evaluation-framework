@@ -1,7 +1,7 @@
 import React from 'react';
 import './videoAnalysis.css'
 import { FetchPost } from "../resources/data-provider";
-import { Button, Box, SpaceBetween, ButtonDropdown, Modal, Select, Spinner, Pagination, Toggle, Icon } from '@cloudscape-design/components';
+import { Button, Box, SpaceBetween, ButtonDropdown, Modal, Select, Spinner, Pagination, Toggle, Icon, Popover, StatusIndicator } from '@cloudscape-design/components';
 import { getCurrentUser } from 'aws-amplify/auth';
 
 class VideoAnalysis extends React.Component {
@@ -61,8 +61,8 @@ class VideoAnalysis extends React.Component {
         this.setState({status: "loading"});
         FetchPost("/extraction/video/get-task", {
           "TaskId": this.props.taskId,
-          "DataTypes": ["Transcription", "ImageCaption","DetectLabel", "DetectText", "DetectModeration", "DetectCelebrity", "DetectLogo"],
-          "PageSize": 30
+          "DataTypes": ["Transcription", "ImageCaption","DetectLabel", "DetectText", "DetectModeration", "DetectCelebrity", "DetectLogo","DetectShot"],
+          "PageSize": 50
         }).then((data) => {
                 var resp = data.body;
                 if (data.statusCode !== 200) {
@@ -139,6 +139,7 @@ class VideoAnalysis extends React.Component {
             p = p.replace("##CELEBRITY##", this.state.item.DetectCelebrity?JSON.stringify(this.state.item.DetectCelebrity.Items, "Celebrity"):"");
             p = p.replace("##MODERATION##", this.state.item.DetectModeration?JSON.stringify(this.state.item.DetectModeration.Items, "Moderation"):"");
             p = p.replace("##IMAGECAPTION##", this.state.item.ImageCaption?JSON.stringify(this.state.item.ImageCaption.Items, "Moderation"):"");
+            p = p.replace("##SHOT##", this.state.item.DetectShot?JSON.stringify(this.state.item.DetectShot, "Shot"):"");
         }
         return p;
     }
@@ -325,7 +326,7 @@ class VideoAnalysis extends React.Component {
                                 onClick={this.handleEvaluation} 
                                 disabled={this.state.promptsTemplate === null || this.state.promptsTemplate.length === 0 || this.state.status === "loading"}
                             >
-                            Run & Save</Button>
+                            Create a task</Button>
                             &nbsp;
                             <Button onClick={()=>{this.setState({showEvalModal: false})}}>Cancel</Button>
                         </div>
@@ -333,6 +334,16 @@ class VideoAnalysis extends React.Component {
                     }
                 >
                     <div className='videoanalysis'>
+                        <div className='warn'>
+                        <Popover
+                            header="Sandbox limitation"
+                            content="This sandbox allows you to quickly test LLM prompts with embedded video metadata, showcasing the art of the possible. For longer videos, the metadata will be truncated to return only the first 50 items (e.g., the first 100 subtitles or the first 100 shots). For full-length videos, we recommend using the Bedrock console or referring to the application sample for more comprehensive results."
+                        >
+                            <StatusIndicator type="info">
+                            Limitation
+                            </StatusIndicator>
+                        </Popover>
+                        </div>
                     <div className='selectmodel'>
                         <div className='key'>Select a Bedrock LLMs model</div>
                         {this.llmParameters !== null?
@@ -398,6 +409,7 @@ class VideoAnalysis extends React.Component {
                                     { text: "DetectModeration ##MODERATION##", id: "##MODERATION##" },
                                     // { text: "DetectLogo ##LOGO##", id: "##LOGO##" },
                                     { text: "Image caption ##IMAGECAPTION##", id: "##IMAGECAPTION##" },
+                                    { text: "DetectShot ##SHOT##", id: "##SHOT##" },
                                 ]}
                                 onItemClick={(e) => {
                                     const prompts = this.state.promptsTemplate === null? "": this.state.promptsTemplate;

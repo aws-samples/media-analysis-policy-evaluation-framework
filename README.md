@@ -1,3 +1,4 @@
+# media-analysis-policy-evaluation-framework
 # Media Analysis and Policy Evaluation Framework
 
 ## Table of Content
@@ -22,7 +23,7 @@
 
 Organizations across media and entertainment, advertising, social media, education, and other sectors require efficient solutions to extract information from videos and apply flexible evaluations based on their policies. Generative artificial intelligence (AI) has unlocked fresh opportunities for these use cases. This solution uses AWS AI and generative AI services to provide a framework to streamline video extraction and evaluation processes.
 
-It helps users extract video metadata from both visual and audio elements, offering granularity at the video frame, shot, and scene levels. Users can then focus on analyzing the video based on this extracted dataset to unlock additional business value.
+It helps users extract video metadata from both visual and audio elements, offering granularity at the video frame, and shot levels. Users can then focus on analyzing the video based on this extracted dataset to unlock additional business value.
 
 ### Architecture Overview
 
@@ -44,7 +45,7 @@ The extraction service allows you to customize the extraction process, including
 - Smart sampling
 - Which ML features are applied at the frame level
 - Whether to enable audio transcription
-- Whether to perform shot and scene analysis. 
+- Whether to perform shot analysis. 
 
 This flexibility gives users control over the workflow, enabling only the necessary features to optimize costs and processing times. Below is a screenshot of the extraction configuration page. The same settings can also be configured via the RESTful API.
 ![Extraction Configuration](./assets/extraction-config.png)
@@ -66,12 +67,6 @@ This flexibility gives users control over the workflow, enabling only the necess
     A continuous sequence of frames captured by a single camera without interruption. The following metadata is available for video shots:
     - Shot Start and End Timestamps: The exact time range of the shot.
     - Shot Summary: A summary of the shot, generated based on the frame summaries and audio transcription using the Amazon Bedrock Anthropic Claude V3 Haiku model.
-
-- **Video Scenes**
-
-    A continuous sequence of shots and audio chapters representing a logical unit of the video, such as a movie scene or a segment of an interview focused on one subject. The following metadata is available for scenes:
-    - Scene Start and End Timestamps: The exact time range of the scene.
-    - Scene Summary: A summary of the scene, generated from shot summaries and audio transcriptions using the Amazon Bedrock Anthropic Claude V3 Sonnet model.
 
 - **Audio Transcripts**
     - Subtitle Start and End Timestamps: The time range of each subtitle segment.

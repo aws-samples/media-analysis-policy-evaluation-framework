@@ -7,9 +7,11 @@ from datetime import datetime
 DYNAMO_VIDEO_TASK_TABLE = os.environ.get("DYNAMO_VIDEO_TASK_TABLE")
 DYNAMO_VIDEO_FRAME_TABLE = os.environ.get("DYNAMO_VIDEO_FRAME_TABLE")
 DYNAMO_VIDEO_TRANS_TABLE = os.environ.get("DYNAMO_VIDEO_TRANS_TABLE")
+DYNAMO_VIDEO_ANALYSIS_TABLE = os.environ.get("DYNAMO_VIDEO_ANALYSIS_TABLE")
 
 S3_PRESIGNED_URL_EXPIRY_S = os.environ.get("S3_PRESIGNED_URL_EXPIRY_S", 3600) # Default 1 hour 
 s3 = boto3.client("s3")
+dynamodb = boto3.resource('dynamodb')
 
 def lambda_handler(event, context):
     task_id = event.get("TaskId")    
@@ -93,6 +95,8 @@ def lambda_handler(event, context):
         task["DetectModeration"] = get_items(task_id, "detect_moderation", from_index, page_size)
     if "DetectLogo" in data_types:
         task["DetectLogo"] = get_items(task_id, "detect_logo", from_index, page_size)
+    if "DetectShot" in data_types:
+        task["DetectShot"] = get_shots(task_id, from_index, page_size)
 
     return {
         'statusCode': 200,
@@ -153,3 +157,54 @@ def get_items(task_id, field_name, from_index, page_size):
         "Total": total,
         "Items": result
     }
+
+def get_shots(task_id, from_index, page_size):
+    video_analysis_table = dynamodb.Table(DYNAMO_VIDEO_ANALYSIS_TABLE)  
+    items = []
+    try:
+        last_evaluated_key = None
+        # Keep querying until there are no more pages of results
+        while True:
+            query_params = {
+                'IndexName': 'task_id-analysis_type-index',  # Name of your index
+                'KeyConditionExpression': 'task_id = :task_id_val AND analysis_type = :type_val',
+                'ExpressionAttributeValues': {
+                    ':task_id_val': task_id,
+                    ':type_val': 'shot'
+                }
+            }
+            if last_evaluated_key:
+                query_params['ExclusiveStartKey'] = last_evaluated_key
+
+            response = video_analysis_table.query(**query_params)
+            for s in response.get('Items', []):
+                i = {
+                    "summary": s.get("summary"),
+                    "start_ts": s.get("start_ts"),
+                    "end_ts": s.get("end_ts"),
+                    "transcripts": []
+                }
+                for f in s.get("frames",[]):
+                    if f and f.get("subtitles"):
+                        for sub in f.get("subtitles",[]):
+                            if sub not in i["transcripts"]:
+                                if sub.get("transcription"):
+                                    if len(i["transcripts"]) > 0 and i["transcripts"][-1] == sub["transcription"]:
+                                        continue
+                                    i["transcripts"].append(sub["transcription"])
+                items.append(i)
+            last_evaluated_key = response.get('LastEvaluatedKey')
+            if not last_evaluated_key:
+                break
+    except Exception as ex:
+        print(ex)
+        return {
+            'statusCode': 400,
+            'body': f'Task {task_id} does not exist.'
+        }
+
+    items = sorted(items, key=lambda x: x['start_ts'], reverse=False)
+    end_index = from_index + page_size
+    if end_index > len(items):
+        end_index = len(items)
+    return items[from_index: end_index]

@@ -82,6 +82,46 @@ class VideoDetail extends React.Component {
         // Return the time difference in milliseconds
         return FormatSeconds(deltaMilliseconds/1000)
       }
+    
+    getTabs(){
+        let tabs = [
+            {
+                label: "Insights",
+                id: "insight",
+                content: <VideoInsight item={this.state.item} OnProgressBarClick={this.handleProgressBarClick} />
+            },
+            {
+                label: "Transcription",
+                id: "transcription",
+                content: <VideoTrans taskId={this.state.item.Request.TaskId} OnSubtitleClick={this.handleTimestampClick} />
+            },
+            {
+                label: "Image Frames",
+                id: "frame",
+                content: <VideoFrames item={this.state.item} OnFrameClick={this.handleTimestampClick} />
+            },
+            {
+                label: "Shots",
+                id: "shot",
+                content: <VideoShots item={this.state.item} OnFrameClick={this.handleTimestampClick} />
+            },
+        ]
+        if (process.env.REACT_APP_SHOW_SCENE === "show") {
+            tabs.push(
+                {
+                    label: "Scenes",
+                    id: "scene",
+                    content: <VideoScenes item={this.state.item} OnFrameClick={this.handleTimestampClick} />
+                }
+            )
+        }
+        tabs.push({
+            label: "Analyze Video",
+            id: "qa",
+            content: <VideoAnalysis taskId={this.state.item.Request.TaskId} />
+        })
+        return tabs;
+    }
 
     render() {
         return (
@@ -173,38 +213,7 @@ class VideoDetail extends React.Component {
                     </div>
                     <div className='detail'>
                         <Tabs
-                            tabs={[
-                                {
-                                    label: "Insights",
-                                    id: "insight",
-                                    content: <VideoInsight item={this.state.item} OnProgressBarClick={this.handleProgressBarClick} />
-                                },
-                                {
-                                    label: "Transcription",
-                                    id: "transcription",
-                                    content: <VideoTrans taskId={this.state.item.Request.TaskId} OnSubtitleClick={this.handleTimestampClick} />
-                                },
-                                {
-                                    label: "Image Frames",
-                                    id: "frame",
-                                    content: <VideoFrames item={this.state.item} OnFrameClick={this.handleTimestampClick} />
-                                },
-                                {
-                                    label: "Shots",
-                                    id: "shot",
-                                    content: <VideoShots item={this.state.item} OnFrameClick={this.handleTimestampClick} />
-                                },
-                                {
-                                    label: "Scenes",
-                                    id: "scene",
-                                    content: <VideoScenes item={this.state.item} OnFrameClick={this.handleTimestampClick} />
-                                },
-                                {
-                                    label: "Analyze Video",
-                                    id: "qa",
-                                    content: <VideoAnalysis taskId={this.state.item.Request.TaskId} />
-                                },
-                            ]}
+                            tabs={this.getTabs()}
                         />
                     </div>
                 </div>: <Spinner/>}

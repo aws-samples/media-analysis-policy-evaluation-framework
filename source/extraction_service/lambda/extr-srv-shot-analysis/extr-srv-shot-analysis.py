@@ -36,7 +36,7 @@ def lambda_handler(event, context):
     shot_similarity_threshold = event.get("body",{}).get("Request",{}).get("AnalysisSetting", {}).get("ShotSimilarityThreshold")
     if not shot_similarity_threshold:
         shot_similarity_threshold = SHOT_SIMILARITY_THRESHOLD
-    shot_similarity_threshold = float(SHOT_SIMILARITY_THRESHOLD)
+    shot_similarity_threshold = float(shot_similarity_threshold)
 
     if not shot_analysis:
         # Shot analysis is not required
@@ -96,6 +96,14 @@ def lambda_handler(event, context):
             "image_caption": frame.get("image_caption"),
             "similarity_score": score,
         })
+    # include the last shot
+    if shot_frames:
+        shots.append({
+                    "start_ts": start_ts,
+                    "end_ts": ts,
+                    "duration": ts - start_ts,
+                    "frames": shot_frames
+                })
 
     # Cleanup existing shots in DB and S3
     cleanup(task_id, EXTR_SRV_S3_BUCKET, S3_KEY_PREFIX)

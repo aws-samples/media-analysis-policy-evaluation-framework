@@ -38,6 +38,7 @@ class VideoUpload extends React.Component {
             rekDetectTextThredhold: null,
             rekDectectCelebrityThreshold: null,
             rekDetectModerationThreshold: null,
+            shotThreshold: null,
 
             inputVideoSampleIntervalSValid: true,
             smartSampleThresholdValid: true,
@@ -45,6 +46,7 @@ class VideoUpload extends React.Component {
             rekDetectTextThredholdValid: true,
             rekDectectCelebrityThresholdValid: true,
             rekDetectModerationThresholdValid: true,
+            shotThresholdValid: true,
 
             noEvaluation: false,
             selectedEvalTemplate: null,
@@ -91,6 +93,8 @@ class VideoUpload extends React.Component {
             rekDetectTextThredhold: this.llmParameters.default_settings.rekognition_detect_text_threshold,
             rekDectectCelebrityThreshold: this.llmParameters.default_settings.rekognition_detect_celebrity_threshold,
             rekDetectModerationThreshold: this.llmParameters.default_settings.rekognition_detect_moderation_threshold,
+            shotThreshold: this.llmParameters.default_settings.shot_detection_threshold,
+
 
             inputVideoSampleIntervalSValid: true,
             smartSampleThresholdValid: true,
@@ -98,6 +102,7 @@ class VideoUpload extends React.Component {
             rekDetectTextThredholdValid: true,
             rekDectectCelebrityThresholdValid: true,
             rekDetectModerationThresholdValid: true,
+            shotThresholdValid: true,
 
             noEvaluation: false,
             selectedEvalTemplate: null,
@@ -127,6 +132,7 @@ class VideoUpload extends React.Component {
                     rekDetectTextThredhold: data.default_settings.rekognition_detect_text_threshold,
                     rekDetectModerationThreshold: data.default_settings.rekognition_detect_moderation_threshold,
                     rekDectectCelebrityThreshold: data.default_settings.rekognition_detect_celebrity_threshold,
+                    shotThreshold: data.default_settings.shot_detection_threshold,
                 });
             })
             .catch(error => {
@@ -150,6 +156,7 @@ class VideoUpload extends React.Component {
                 || !this.state.rekDetectTextThredholdValid 
                 || !this.state.rekDectectCelebrityThresholdValid 
                 || !this.state.rekDetectModerationThresholdValid
+                || !this.state.shotThresholdValid
             ) {
                     this.setState({alert: "Ensure the settings are correct before proceeding to the next step."});
                     return;
@@ -241,9 +248,9 @@ class VideoUpload extends React.Component {
                 "AggregateResult": true,
             },
             "AnalysisSetting": {
-                "SceneDetection": this.state.enableShotSceneDetection,
                 "ShotDetection": this.state.enableShotSceneDetection,
-                "ShotSimilarityThreshold": null,
+                "SceneDetection":this.state.enableShotSceneDetection,
+                "ShotSimilarityThreshold": this.state.shotThreshold,
             },
             "EmbeddingSetting": {
                 "Text": process.env.REACT_APP_VECTOR_SEARCH === "enable",
@@ -467,7 +474,7 @@ class VideoUpload extends React.Component {
                                         </FormField>
                                         
                                     </ColumnLayout>
-                                    <ColumnLayout columns={1}>
+                                    <ColumnLayout columns={2}>
                                         <Toggle checked={this.state.enableSmartSample} onChange={(e)=>
                                             {
                                                 this.setState({enableSmartSample: e.detail.checked, enableShotSceneDetection: e.detail.checked});
@@ -513,21 +520,39 @@ class VideoUpload extends React.Component {
                                 </Toggle>
                                 </Container>
                                 <Container header={
-                                        <Header variant="h2">Video Analysis </Header>
+                                        <Header variant="h2">Video Shot Analysis </Header>
                                     }>
                                         <ColumnLayout columns={1}>
                                             <Checkbox checked={this.state.enableShotSceneDetection} onChange={(e)=>this.setState({enableShotSceneDetection: e.detail.checked, enableSmartSample: true})}>
-                                            Shot and scene detection with summary (Amazon Bedrock Anthropic Claude V3 Haiku and Sonnet)
+                                            Shot detection with summary (Amazon Bedrock Anthropic Claude V3 Haiku and Sonnet)
                                             <div className='desc'>
                                                 Requires enabling Smart Sampling.
                                             </div>
                                             <div className='desc'>
                                                 Shot detection group video frames to shots by utilizing the similarity score generated through Titan multimodal embeddings with vector database similarity comparison.
                                             </div>
-                                            <div className='desc'>
-                                                Scene detection leverage the Amazon Bedrock Anthropic Claude model to summarize video scenes based on shot-level summary and audio transcriptions.
-                                            </div>
                                             </Checkbox>
+                                            <ExpandableSection defaultExpanded={false} headerText="Customize shot detection similiarity threshold">
+                                            <FormField
+                                                label=""
+                                                description="Amazon Bedrock Titan multimodal embedding similarity score (FAISS L2) threshold: A new shot will be created when the similarity score between adjacent images exceeds this threshold."
+                                                errorText={
+                                                    !this.state.shotThresholdValid?"Please provide a decimal value greater than 0 and less than 2":""
+                                                }
+                                                >
+                                                <div>
+                                                    <input type="number" className="input"
+                                                        value={this.state.shotThreshold} 
+                                                        onChange={(e)=>{
+                                                                this.setState({
+                                                                    shotThreshold: e.target.value,
+                                                                    shotThresholdValid: IsValidNumber(e.target.value) && e.target.value > 0 && e.target.value <= 2
+                                                                })
+                                                        }}
+                                                    />
+                                                </div>
+                                            </FormField>
+                                            </ExpandableSection>
                                         </ColumnLayout>
                                 </Container>
                                 <ExpandableSection variant="container" headerText="Advanced settings" defaultExpanded={this.state.advanceSettingExpand}>

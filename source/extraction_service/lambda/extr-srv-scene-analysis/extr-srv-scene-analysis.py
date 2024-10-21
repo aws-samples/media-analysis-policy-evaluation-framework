@@ -5,14 +5,14 @@ import numbers,decimal
 from boto3.dynamodb.conditions import Key
 import os
 
-DYNAMO_VIDEO_ANALYSIS_TABLE = os.environ.get("DYNAMO_VIDEO_ANALYSIS_TABLE")
-
+DYNAMODB_TABLE_VIDEO_ANALYSIS = os.environ.get("DYNAMODB_TABLE_VIDEO_ANALYSIS")
 BEDROCK_REGION = os.environ.get("BEDROCK_REGION", os.environ['AWS_REGION'])
 EXTR_SRV_S3_BUCKET = os.environ.get("EXTR_SRV_S3_BUCKET")
 
-MODEL_ID_SCENE_ANALYSIS = os.environ.get('BEDROCK_ANTHROPIC_CLAUDE_SONNET_V35') 
-MODEL_ID_SUMMARY = os.environ.get('BEDROCK_ANTHROPIC_CLAUDE_HAIKU')
+MODEL_ID_SCENE_ANALYSIS = os.environ.get('BEDROCK_ANTHROPIC_CLAUDE_SONNET_V35')
 MODEL_VERSION = os.environ.get('BEDROCK_ANTHROPIC_CLAUDE_HAIKU_MODEL_VERSION')
+MODEL_ID_SUMMARY = os.environ.get('BEDROCK_ANTHROPIC_CLAUDE_HAIKU')
+
 PAGE_SIZE = 100
 S3_KEY_PREFIX = "tasks/{task_id}/scene/"
 S3_FILE_TEMPLATE = "scene_{index}.json"
@@ -22,7 +22,7 @@ bedrock_runtime_client = boto3.client(service_name='bedrock-runtime', region_nam
 dynamodb = boto3.resource('dynamodb')
 s3 = boto3.client('s3')
 
-video_analysis_table = dynamodb.Table(DYNAMO_VIDEO_ANALYSIS_TABLE)
+video_analysis_table = dynamodb.Table(DYNAMODB_TABLE_VIDEO_ANALYSIS)
 
 def lambda_handler(event, context):
     task_id = event.get("body",{}).get("Id")
@@ -33,7 +33,7 @@ def lambda_handler(event, context):
         }
     scene_analysis = event.get("body",{}).get("Request",{}).get("AnalysisSetting", {}).get("SceneDetection", False)
     if not scene_analysis:
-        # Scene analysis is not required
+        print("Scene analysis is not required")
         return event
 
     # Get all shots from DB
@@ -77,47 +77,47 @@ def lambda_handler(event, context):
 
     # Generate scenes using LLMs
     scenes = generate_scene(metadata)
-    #if not scenes:
-    #    # retry
-    #   scenes = generate_scene(caps, subtitles)
 
     # Cleanup existing scenes in DB and S3
     cleanup(task_id, EXTR_SRV_S3_BUCKET, S3_KEY_PREFIX)
 
-    # Align shots to scenes and store scenes to DB
-    index = 0
-    for s in scenes:
-        if s:
-            index += 1
-            s["index"] = index
-            s["shots"] = []
+    try:
+        # Align shots to scenes and store scenes to DB
+        index = 0
+        for s in scenes:
+            if s:
+                index += 1
+                s["index"] = index
+                s["shots"] = []
 
-            caps, subs = [],[]
-            for shot in shots:
-                if (shot["start_ts"] >= s["start_ts"] and shot["start_ts"] < s["end_ts"]) or (shot["start_ts"] < s["start_ts"] and shot["end_ts"] >= s["end_ts"]):
-                    s["shots"].append(shot)
-                    if shot.get("summary"):
-                        caps.append(shot["summary"])
-                    if shot.get("frames"):
-                        for f in shot.get("frames"):
-                            if f and f.get("subtitles"):
-                                subs.extend(f.get("subtitles"))
+                caps, subs = [],[]
+                for shot in shots:
+                    if (shot["start_ts"] >= s["start_ts"] and shot["start_ts"] < s["end_ts"]) or (shot["start_ts"] < s["start_ts"] and shot["end_ts"] >= s["end_ts"]):
+                        s["shots"].append(shot)
+                        if shot.get("summary"):
+                            caps.append(shot["summary"])
+                        if shot.get("frames"):
+                            for f in shot.get("frames"):
+                                if f and f.get("subtitles"):
+                                    subs.extend(f.get("subtitles"))
 
-            # Re-generate summary
-            s["summary"] = generate_summary(caps, subs)
+                # Re-generate summary
+                s["summary"] = generate_summary(caps, subs)
 
-            # Store to DB
-            s["id"] = f"{task_id}_scene_{index}"
-            s["task_id"] = task_id
-            s["analysis_type"] = 'scene'
-            resposne = video_analysis_table.put_item(Item=convert_to_dynamo_format(s))
+                # Store to DB
+                s["id"] = f"{task_id}_scene_{index}"
+                s["task_id"] = task_id
+                s["analysis_type"] = 'scene'
+                resposne = video_analysis_table.put_item(Item=convert_to_dynamo_format(s))
 
-            # Store to S3
-            s3.put_object(Bucket=EXTR_SRV_S3_BUCKET, 
-                Key=S3_KEY_TEMPLATE.format(task_id=task_id, index=index), 
-                Body=json.dumps(s), 
-                ContentType='application/json'
-            )
+                # Store to S3
+                s3.put_object(Bucket=EXTR_SRV_S3_BUCKET, 
+                    Key=S3_KEY_TEMPLATE.format(task_id=task_id, index=index), 
+                    Body=json.dumps(s), 
+                    ContentType='application/json'
+                )
+    except Exception as ex:
+        print(ex)
     
     return event
 

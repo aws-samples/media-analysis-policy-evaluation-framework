@@ -28,12 +28,12 @@
             "bedrock_knowledge_base_id": ""
         },
         {
-            "id": "sample_question",
+            "id": "scene_detection_from_shots",
             "type": "analysis",
-            "name": "Sample Q & A: is there police officers in the video?",
+            "name": "Shot-based scene detection",
             "description": "",
-            "prompts_template": "Human: Does the video feature a police officer? If yes, specify the timestamp. Summary: Detects presence of police officer and provides corresponding timestamp within 100 tokens. You can find the video transcription in the <trans> tag and labels in the <logo> tag: \n\n<trans>##TRANSCRIPTION##</trans>\n<logo>##LOGO##</logo>\n\nAssistant:",
-            "bedrock_llm_model_id": "anthropic.claude-v2:1",
+            "prompts_template": "Human: You are a media expert tasked with analyzing a video to identify its scenes. Scenes are continuous sequences of action occurring in a specific location and time, consisting of a series of shots. Base your analysis on the visual frame summary and the audio transcription. Credits, including the list of cast and crew at the beginning and end of the video, should be treated as independent scenes. \nHere is the shot-level information for the video, which includes the start and end times, a summary for each shot, and audio transcriptions aligned with the shots in <shot> tag\n\n<shot>##SHOT##<shot>\n\nAn example of the output:{\"scenes\": [{\"start_ts\": 10.5, \"end_ts\": 20, \"summary\": \"\"}]}\n\nAssistant:",
+            "bedrock_llm_model_id": "anthropic.claude-3-sonnet-20240229-v1:0",
             "bedrock_knowledge_base_id": ""
         },
         {
@@ -43,6 +43,15 @@
             "description": "",
             "prompts_template": "Human: classify the video into an IAB category.\nTranscription: ##TRANSCRIPTION##\nLabel: ##LABEL##\nText extracted from image frames:##TEXT##\nModeration categories: ##MODERATION##\nCelebrities: ##CELEBRITY##\n\nAssistant:",
             "bedrock_llm_model_id": "anthropic.claude-3-sonnet-20240229-v1:0",
+            "bedrock_knowledge_base_id": ""
+        },
+        {
+            "id": "sample_question",
+            "type": "analysis",
+            "name": "Sample Q & A: is there police officers in the video?",
+            "description": "",
+            "prompts_template": "Human: Does the video feature a police officer? If yes, specify the timestamp. Summary: Detects presence of police officer and provides corresponding timestamp within 100 tokens. You can find the video transcription in the <trans> tag and labels in the <logo> tag: \n\n<trans>##TRANSCRIPTION##</trans>\n<logo>##LOGO##</logo>\n\nAssistant:",
+            "bedrock_llm_model_id": "anthropic.claude-v2:1",
             "bedrock_knowledge_base_id": ""
         },
         {
@@ -71,6 +80,10 @@
         {
             "name": "Anthropic Claude V3 Sonnet",
             "value": "anthropic.claude-3-sonnet-20240229-v1:0"
+        },
+        {
+            "name": "Anthropic Claude V3.5 Sonnet",
+            "value": "anthropic.claude-3-5-sonnet-20240620-v1:0"
         }
     ],
     "bedrock_knowledge_bases": [
@@ -123,6 +136,7 @@
         "rekognition_detect_label_threshold": 80,
         "rekognition_detect_text_threshold": 60,
         "rekognition_detect_moderation_threshold": 90,
-        "rekognition_detect_celebrity_threshold": 80
+        "rekognition_detect_celebrity_threshold": 80,
+        "shot_detection_threshold": 0.5
     }
 }
