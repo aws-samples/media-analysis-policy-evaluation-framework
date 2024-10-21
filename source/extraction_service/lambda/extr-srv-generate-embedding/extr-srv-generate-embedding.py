@@ -29,7 +29,11 @@ def lambda_handler(event, context):
     
     embedding = None
     if embedding_type == "txt":
-        body = json.dumps({"inputText": f"{text_input}"})
+        body = json.dumps({
+                "inputText": f"{text_input}", 
+                "dimensions": 1536,
+                "normalize": True
+            })
         try:
             response = bedrock.invoke_model(
                 body=body, 
