@@ -30,7 +30,7 @@ This solution is designed for two personas: business users and builders.
 This tool can be utilized for comprehensive video content analysis, encompassing but not limited to:
 - Content Moderation.
 - Customized policy evaluation, including DEI, grooming, and other tailored business rules. 
-- IAB/GARM classfication.
+- IAB/GARM classification.
 - Video summarization.
 - Video scene analysis and ad break detection.
 
@@ -55,7 +55,7 @@ The main component of the solution enables users to extract video metadata from 
 - Via RESTful APIs.
 
 The extraction service allows you to customize the extraction process, including:
-- Sample frequency
+- Sample frequency (numbers of frames per second)
 - Whether to enable Smart Sampling (remove similiar frames)
 - Which ML features are applied at the frame level extraction (label, text, celebrity, moderation and image summary)
 - Whether to enable audio transcription
@@ -70,22 +70,22 @@ The extraction service will output video data at the following levels of granula
 
     Image frames are sampled from the video based on the provided sampling interval, with "smart sampling" enabled to remove adjacent similar image frames utilizing Amazon Bedrock [Titan](https://aws.amazon.com/bedrock/titan) Multimodal Embedding and Vector DB similarity search, optimizing costs and reducing processing time. The following metadata is generated at the frame level:
     - Timestamp: The exact time the frame was captured from the video.
-    - Labels: Thousands of generic labels detected using [Amazon Rekognition](https://aws.amazon.com/rekognition/)’s [DetectLabels API](https://docs.aws.amazon.com/rekognition/latest/dg/labels-detect-labels-image.html).
-    - Text: Text in images extracted using Amazon Rekognition’s [DetectText API](https://docs.aws.amazon.com/rekognition/latest/dg/text-detection.html).
+    - Labels: Generic labels detected using [Amazon Rekognition](https://aws.amazon.com/rekognition/)’s [DetectLabels API](https://docs.aws.amazon.com/rekognition/latest/dg/labels-detect-labels-image.html).
+    - Text: Text in video frame extracted using Amazon Rekognition’s [DetectText API](https://docs.aws.amazon.com/rekognition/latest/dg/text-detection.html).
     - Celebrity: Well known faces detected using Amazon Rekognition’s [DetectCelebrities API](https://docs.aws.amazon.com/rekognition/latest/dg/celebrities.html).
-    - Content Moderation Labels: unsafe and inappropriate content classified using Amazon Rekognition’s [DetectModerationLabels API](https://docs.aws.amazon.com/rekognition/latest/dg/moderation.html).
-    - Image Summary: Generic description of the image, generated using the Amazon Bedrock [Anthropic Claude](https://aws.amazon.com/bedrock/claude) V3 Haiku model.
-    - Text embedding and multimodal embedding: Vectors generated using [Amazon Bedrock Titan](https://aws.amazon.com/bedrock/titan) Multimodal and text embedding models to support semantic search and image search.
+    - Content moderation labels: Unsafe and inappropriate content classified using Amazon Rekognition’s [DetectModerationLabels API](https://docs.aws.amazon.com/rekognition/latest/dg/moderation.html).
+    - Image summary: Generic description of the image, generated using the Amazon Bedrock [Anthropic Claude](https://aws.amazon.com/bedrock/claude) V3 Haiku model.
+    - Text embedding and multimodal embedding: Vectors generated using [Amazon Bedrock Titan](https://aws.amazon.com/bedrock/titan) multimodal and text embedding models to support semantic search and image search.
 
 - **Visual Shots**
 
-    A continuous sequence of frames captured by a single camera without interruption. The following metadata is available for video shots:
-    - Shot Start and End Timestamps: The exact time range of the shot.
-    - Shot Summary: A summary of the shot, generated based on the frame summaries and audio transcription using the Amazon Bedrock Anthropic Claude V3 Haiku model.
+    A continuous sequence of frames captured by a single camera without interruption. The solution utilizes the similarity score generated at the frame level to identify shots. The following metadata is available for video shots:
+    - Shot start and end timestamps: The exact time range of the shot.
+    - Shot summary: A summary of the shot, generated based on the frame summaries and audio transcription using the Amazon Bedrock Anthropic Claude V3 Haiku model.
 
 - **Audio Transcripts**
-    - Subtitle Start and End Timestamps: The time range of each subtitle segment.
-    - Audio Transcription: Generated using [Amazon Transcribe](https://aws.amazon.com/pm/transcribe).
+    - Transcript start and end timestamps: The time range of each subtitle segment.
+    - Audio transcrip: Generated using [Amazon Transcribe](https://aws.amazon.com/pm/transcribe).
 
 ### Customize the Extraction Service
 The Extraction Service is designed for easy extension and integration with in-house trained or third-party ML models. For instance, as illustrated in the implementation diagram below, users can make minor modifications to the Lambda functions within the frame iteration subflow to incorporate additional ML models, resulting in richer extraction outcomes.
