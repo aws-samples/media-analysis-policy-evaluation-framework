@@ -36,8 +36,7 @@ This tool can be utilized for comprehensive video content analysis, encompassing
 
 The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which you can deploy to your AWS account by following the [instruction](#deployment-steps).
 
-#### Watch the demo video
-[![Demo video](./assets/demo-video-thumbnail.png)](https://www.youtube.com/watch?v=QHOp16urp-k)
+[![Demo video](./assets/screenshot-shot.png)]
 
 ### Architecture Overview
 
