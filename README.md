@@ -1,4 +1,3 @@
-# media-analysis-policy-evaluation-framework
 # Media Analysis and Policy Evaluation Framework
 
 ## Table of Content
