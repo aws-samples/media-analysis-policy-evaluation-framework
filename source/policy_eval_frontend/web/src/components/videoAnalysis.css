@@ -1,0 +1,117 @@
+.videoanalysis {
+    padding-left: 10px;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+}
+.videoanalysis .warn{
+    float: right;
+}
+.modalfooterleft {
+    display: block;
+    float: left;
+}
+.modalfooterright {
+    display: block;
+    float: right;
+}
+.videoanalysis .key {
+    display: inline-block;
+    font-weight: bold;
+    padding-top: 5px;
+    font-size: medium;
+}
+.videoanalysis .desc {
+    display: block;
+    font-size: small;
+    color:gray;
+    padding-bottom: 5px;
+}
+.videoanalysis .selectmodel {
+    display: block;
+    width: 100%;
+    padding-top: 10px;
+}
+.videoanalysis .selecttemp {
+    display: block;
+    width: 100%;
+    padding: 10px 0px 10px 0px;
+}
+.videoanalysis .promptseditor {
+    display: inline-block;
+    width: 59%;
+}
+.videoanalysis .promptseditor .editor {
+    width: 100%;
+    border-radius: 10px;
+    padding:5px;
+}
+
+.videoanalysis .promptseditor .previewtoggle {
+    display: inline-block;
+    float: right;
+    vertical-align: top;
+    padding-top: 5px;
+}
+.videoanalysis .promptseditor .selectplaceholder {
+    display: inline-block;
+    padding-bottom: 10px;
+}
+.videoanalysis .llmresp {
+    display: block;
+    width: 39%;
+    float: right;
+    vertical-align: top;
+}
+.videoanalysis .llm-resp {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgb(230, 222, 230);
+    margin-top: 15px;
+}
+.videoeval .action {
+    float: right;
+}
+.videoeval .tasks {
+    max-height: 1000px;
+    width: 100%;
+    overflow-y: auto;
+}
+.videoeval .task {
+    display: inline-block;
+    border: solid 1px lightgray;
+    padding: 10px;
+    margin: 5px;
+    width: 95%;
+    color: gray;
+}
+.videoeval .task .delete {
+    float: right;
+}
+.videoeval .task:hover {
+    background-color: rgb(239, 239, 239);
+}
+.videoeval .task .title {
+    font-weight: bold;
+    color: black;
+}
+.videoeval .task .ts {
+    color:silver;
+    font-size: small;
+}
+
+.videoeval .task .status {
+    font-size: small;
+    font-style: italic;
+}
+
+.videoeval .task .prompt:hover {
+    cursor: pointer;
+}
+
+.videoeval .task .prompt_disabled {color: silver;}
+
+.videoeval .task .delete:hover {
+    cursor: pointer;
+    color: black;
+}
