@@ -223,7 +223,7 @@ These commands deletes resources deploying through the solution.
 You can also go to the CloudFormation console, select the VideoAnalysisRootStack stack, and click the Delete button to remove all the resources.
 
 ## Known issues
-For deployments in regions other than us-east-1, the web UI may experience issues with video uploads immediately after deployment due to S3 multipart uploads. This issue should resolve itself within an hour.
+For deployments in regions other than us-east-1, the web UI may experience issues with video uploads immediately after deployment due to S3 multipart uploads. This issue should resolve itself within a few hour.
 
 ## Notices
 
