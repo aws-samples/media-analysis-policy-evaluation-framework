@@ -1095,7 +1095,7 @@ class ExtractionServiceStack(NestedStack):
             timeout=Duration.hours(int(VIDEO_EXTRACTION_WORKFLOW_TIMEOUT_HR)),
             tracing_enabled=True,
             logs= _aws_stepfunctions.LogOptions(
-                destination=logs.LogGroup(self, "StepFunctionExtractionWorkflowLogGroup"),
+                destination=logs.LogGroup(self, "/aws/vendedlogs/states/extrsrvworkflow"),
                 level=_aws_stepfunctions.LogLevel.ALL
             )
         )
@@ -1204,6 +1204,7 @@ class ExtractionServiceStack(NestedStack):
             vpc=self.vpc,
             layers=[self.opensearch_layer]
         )
+        lambda_delete_task_processor.node.add_dependency(self.delete_task_q)
 
         lambda_delete_task_processor.add_event_source(lambda_event_sources.SqsEventSource(
             queue=self.delete_task_q,
@@ -1500,6 +1501,7 @@ class ExtractionServiceStack(NestedStack):
                 'DYNAMO_VIDEO_TRANS_TABLE': DYNAMO_VIDEO_TRANS_TABLE,
                 'DYNAMO_VIDEO_FRAME_TABLE': DYNAMO_VIDEO_FRAME_TABLE,
                 'DYNAMO_VIDEO_FRAME_TABLE': DYNAMO_VIDEO_FRAME_TABLE,
+                'DYNAMO_VIDEO_ANALYSIS_TABLE': DYNAMO_VIDEO_ANALYSIS_TABLE,
                 'S3_PRESIGNED_URL_EXPIRY_S':S3_PRE_SIGNED_URL_EXPIRY_S,
             })        
         
