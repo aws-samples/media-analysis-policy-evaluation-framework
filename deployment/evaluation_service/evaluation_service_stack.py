@@ -136,7 +136,9 @@ class EvaluationServiceStack(NestedStack):
             instance_hash=self.instance_hash, memory_m=128, timeout_s=30, ephemeral_storage_size=512,
             evns={
              'BEDROCK_DEFAULT_MODEL_ID': BEDROCK_DEFAULT_MODEL_ID,
-             'BEDROCK_REGION': self.bedrock_region
+             'BEDROCK_REGION': self.bedrock_region,
+             'BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3': BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3,
+             'BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3_MODEL_VERSION': BEDROCK_ANTHROPIC_CLAUDE_SONNET_V3_MODEL_VERSION
             })   
 
         # POST v1/evaluation/create-task
