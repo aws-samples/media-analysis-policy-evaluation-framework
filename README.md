@@ -172,7 +172,7 @@ The solution requires access to Amazon Bedrock Foundation Models (FMs): Titan mu
 1. Clone the source code from GitHub repo 
 
 ```
-git clone git@github.com:aws-samples/media-analysis-policy-evaluation-framework.git
+git clone https://github.com/aws-samples/media-analysis-policy-evaluation-framework.git
 cd media-analysis-policy-evaluation-framework
 ```
 
