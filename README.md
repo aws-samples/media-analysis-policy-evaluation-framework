@@ -1,4 +1,4 @@
-# Media Analysis and Policy Evaluation Framework
+# Video Extraction and Dynamic Analysis Framework
 
 ## Table of Content
 
