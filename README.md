@@ -20,17 +20,15 @@
 
 ## Overview
 
-Organizations across advertising, media and entertainment, social media, education, gaming, and other sectors require efficient solutions to extract information from videos and apply flexible analysis. Generative AI (GenAI) has unlocked fresh opportunities for these use cases. 
+Organizations across advertising, media and entertainment, social media, education, gaming, and other sectors require efficient solutions to evaluate and analyze video assets flexibly. Generative AI (GenAI) has unlocked new opportunities and significantly enhanced the accuracy and flexibility of these workflows.
 
-This solution uses AWS AI and GenAI services to provide a framework to streamline video extraction and analysis/evaluation processes. It is designed for builders seeking a modular approach to video extraction and dynamic LLM analysis. For business users looking for a ready-made tool for video analysis and policy evaluation can benefit from the built-in UI. They can upload videos, test customized analytics rules and policies using the integrated LLM sandbox, and conduct flexible video analysis tasks to serve a quick PoC.
+Pre-built video analysis tools can be helpful, but industry-specific needs often demand customization and modular design for smooth production integration. Customers with video assets often create redundant pipelines (e.g., separate ones for video moderation and ad break detection that reprocess the same videos), leading to repeated metadata extraction, wasted resources, and higher costs.
 
-The video analysis workflow generally consists of two main steps, both supported by this solution:
+This solution provides robust components that helps builders reuse extraction results across multiple analysis pipelines, reducing unnecessary effort and lowering costs by breaking the video analysis process into two independent steps:
 
-1. Extract Information: Utilize AI/ML/GenAI features to detect and extract information from both the visual and audio aspects of the video.
+1. Extract Information: A generic process that utilize AI, ML, and GenAI features to detect and extract information from both the visual and audio aspects of the video at the desired level of granularity. 
 
-    This stage can be generic, focusing on extracting information from the video's visual and audio elements. It employs AI and engineering techniques to effectively and efficiently extract data at the desired level of granularity. Typical techniques include sampling image frames from the video, applying AI/GenAI features to detect objects and faces, extracting text and descriptions from frames, and generating audio transcripts.
-
-2. Analyze the Data: With detailed video metadata, various business needs can be met, including but not limited to:
+2. Analyze the Data: With detailed video metadata, a variety of business needs can be addressed. This solution features a built-in UI LLM sandbox, enabling users to quickly test popular video analysis use cases using their own videos, including but not limited to:
 
     - Content moderation.
     - Customized policy evaluation, including DEI, grooming, and other tailored business rules. 
@@ -41,17 +39,17 @@ The video analysis workflow generally consists of two main steps, both supported
 
 The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which you can deploy to your AWS account by following the [instruction](#deployment-steps).
 
-#### A screenshot of the Video Shot Insights page
+#### A screenshot of the built-in web UI
 ![Demo video](./assets/screenshot-shot.png)
 
 
 ### Architecture Overview
 
-The solution employs a microservices serverless architecture, which consists of three loosely coupled microservices:
+The solution employs a microservices serverless architecture, which consists of three loosely coupled components:
 
 - **Web UI**: This allows users to upload videos, extract metadata, and apply dynamic analysis in a self-serve manner. It is a static React application hosted on [Amazon S3](https://aws.amazon.com/s3/) as a static website, with [Amazon CloudFront](https://aws.amazon.com/cloudfront/) for content distribution, [Amazon Cognito](https://aws.amazon.com/cognito/) user pool, and [Amazon Amplify](https://aws.amazon.com/amplify/) for authentication.
-- **Extraction Service**: This core component of the solution manages the video metadata extraction workflow. It handles process concurrency (the number of videos and frames processed in parallel), ensures high availability, and offers flexible configuration options. The extracted data is accessible via S3 and RESTful APIs. It is built using [Amazon Step Functions](https://aws.amazon.com/step-functions/), [Amazon API Gateway](https://aws.amazon.com/api-gateway/), [AWS Lambda](https://aws.amazon.com/lambda/), [Amazon DynamoDB](https://aws.amazon.com/dynamodb/), [Amazon OpenSearch Service](https://aws.amazon.com/opensearch-service/), [Amazon SQS](https://aws.amazon.com/sqs/), [Amazon SNS](https://aws.amazon.com/sns/), Amazon S3, and [Amazon VPC](https://aws.amazon.com/vpc/).
-- **Evaluation Service**: A lightweight component that helps users construct GenAI prompts and easily run evaluation tasks through the Web UI. It includes sample prompt templates for video content moderation, summarization, and IAB classification, demonstrating how to leverage Generative AI for flexible video analysis based on the Extraction Service output. This is a serverless application utilizing Amazon API Gateway, AWS Lambda, [Amazon Bedrock](https://aws.amazon.com/bedrock/), and Amazon DynamoDB.
+- **Extraction Service**: This core component manages the video metadata extraction workflow, orchestrating visual extraction from sampled video frames, applying AI features for data extraction, and transcribing audio to text. It supports process concurrency, ensures high availability, and provides flexible configuration options. The extracted data is accessible via S3 and RESTful APIs. It is built using [Amazon Step Functions](https://aws.amazon.com/step-functions/), [Amazon API Gateway](https://aws.amazon.com/api-gateway/), [AWS Lambda](https://aws.amazon.com/lambda/), [Amazon DynamoDB](https://aws.amazon.com/dynamodb/), [Amazon OpenSearch Service](https://aws.amazon.com/opensearch-service/), [Amazon SQS](https://aws.amazon.com/sqs/), [Amazon SNS](https://aws.amazon.com/sns/), Amazon S3, and [Amazon VPC](https://aws.amazon.com/vpc/).
+- **Evaluation Service**: A lightweight component that enables users to create GenAI prompts and run evaluation tasks via a Web UI, with sample templates for video moderation, summarization, and IAB classification, demonstrating flexible video analysis based on Extraction Service output. This is a serverless application utilizing Amazon API Gateway, AWS Lambda, [Amazon Bedrock](https://aws.amazon.com/bedrock/), and Amazon DynamoDB.
 
 ![configureation UI](./assets/guidance-diagram.png)
 
@@ -231,7 +229,8 @@ These commands deletes resources deploying through the solution.
 You can also go to the CloudFormation console, select the VideoAnalysisRootStack stack, and click the Delete button to remove all the resources.
 
 ## Known issues
-For deployments in regions other than us-east-1, the web UI may experience issues with video uploads immediately after deployment due to S3 multipart uploads. This issue should resolve itself within a few hour.
+- For deployments in regions other than us-east-1, the web UI may experience issues with video uploads immediately after deployment due to S3 multipart uploads. This issue should resolve itself within a few hour.
+- The Web UI video analysis sandbox allows users to quickly test LLM prompts with embedded video metadata, showcasing the art of the possible. For longer videos, the metadata will be truncated to return only the first 50 items (e.g., the first 100 subtitles or the first 100 shots). For full-length videos, we recommend using the Bedrock console or referring to the application sample for more comprehensive results.
 
 ## Notices
 
