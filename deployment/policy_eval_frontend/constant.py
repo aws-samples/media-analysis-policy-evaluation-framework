@@ -1,7 +1,7 @@
 S3_BUCKET_NAME_PREFIX = 'video-analysis'
 COGNITO_INVITATION_EMAIL_TITLE = 'Your temporary password for the ##APP_NAME##'
 APP_NAME = 'Media Analysis'
-SSM_INSTRUCTION_URL = 'https://github.com/aws-solutions-library-samples/guidance-for-media-extraction-and-dynamic-content-policy-evaluation-framework-on-aws/blob/main/deployment-instruction.md'
+SSM_INSTRUCTION_URL = 'https://github.com/aws-samples/media-analysis-policy-evaluation-framework/blob/main/access-opensearch-db.md'
 COGNITO_INVITATION_EMAIL_TEMPLATE = '''
 
 <html>
