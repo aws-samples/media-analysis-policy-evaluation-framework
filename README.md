@@ -1,4 +1,4 @@
-# Video Extraction and Dynamic Analysis Framework
+# Media Analysis and Policy Evaluation Framework
 
 ## Table of Content
 
@@ -21,8 +21,6 @@
 ## Overview
 
 Organizations across advertising, media and entertainment, social media, education, gaming, and other sectors require efficient solutions to evaluate and analyze video assets flexibly. Generative AI (GenAI) has unlocked new opportunities and significantly enhanced the accuracy and flexibility of these workflows.
-
-Pre-built video analysis tools can be helpful, but industry-specific needs often demand customization and modular design for smooth production integration. Customers with video assets often create redundant pipelines (e.g., separate ones for video moderation and ad break detection that reprocess the same videos), leading to repeated metadata extraction, wasted resources, and higher costs.
 
 This solution provides robust components that helps builders reuse extraction results across multiple analysis pipelines, reducing unnecessary effort and lowering costs by breaking the video analysis process into two independent steps:
 
