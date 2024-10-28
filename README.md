@@ -20,32 +20,37 @@
 
 ## Overview
 
-Organizations across advertising, media and entertainment, social media, education, and other sectors require efficient solutions to extract information from videos and apply flexible evaluations based on their policies. Generative artificial intelligence (AI) has unlocked fresh opportunities for these use cases. This solution uses AWS AI and generative AI services to provide a framework to streamline video extraction and evaluation processes.
+Organizations across advertising, media and entertainment, social media, education, gaming, and other sectors require efficient solutions to extract information from videos and apply flexible analysis. Generative AI (GenAI) has unlocked fresh opportunities for these use cases. 
 
-This solution is designed for two personas: business users and builders. 
-- Business users looking for a ready-made tool for media asset analysis and policy evaluation can leverage the built-in UI. They can upload videos, test customized policies using the integrated LLM sandbox, and conduct flexible policy evaluations. 
-- For builders seeking a modular solution for video extraction and dynamic LLM analysis, the backend microservice can be deployed independently and seamlessly integrated into their existing workflow as a foundational building block.
+This solution uses AWS AI and GenAI services to provide a framework to streamline video extraction and analysis/evaluation processes. It is designed for builders seeking a modular approach to video extraction and dynamic LLM analysis. For business users looking for a ready-made tool for video analysis and policy evaluation can benefit from the built-in UI. They can upload videos, test customized analytics rules and policies using the integrated LLM sandbox, and conduct flexible video analysis tasks to serve a quick PoC.
 
+The video analysis workflow generally consists of two main steps, both supported by this solution:
 
-This tool can be utilized for comprehensive video content analysis, encompassing but not limited to:
-- Content moderation.
-- Customized policy evaluation, including DEI, grooming, and other tailored business rules. 
-- IAB/GARM classification.
-- Video summarization.
-- Video shot detection.
-- Video scene analysis and ad break detection.
+1. Extract Information: Utilize AI/ML/GenAI features to detect and extract information from both the visual and audio aspects of the video.
+
+    This stage can be generic, focusing on extracting information from the video's visual and audio elements. It employs AI and engineering techniques to effectively and efficiently extract data at the desired level of granularity. Typical techniques include sampling image frames from the video, applying AI/GenAI features to detect objects and faces, extracting text and descriptions from frames, and generating audio transcripts.
+
+2. Analyze the Data: With detailed video metadata, various business needs can be met, including but not limited to:
+
+    - Content moderation.
+    - Customized policy evaluation, including DEI, grooming, and other tailored business rules. 
+    - IAB/GARM classification.
+    - Video summarization.
+    - Video scene analysis and ad break detection.
+    - More adhoc video analysis use cases.
 
 The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which you can deploy to your AWS account by following the [instruction](#deployment-steps).
 
 #### A screenshot of the Video Shot Insights page
 ![Demo video](./assets/screenshot-shot.png)
 
+
 ### Architecture Overview
 
-The solution can be deployed to your AWS account as a CDK package with a serverless architecture. It consists of three loosely coupled microservices:
+The solution employs a microservices serverless architecture, which consists of three loosely coupled microservices:
 
-- **Web UI**: This allows users to upload videos, extract metadata, and apply dynamic analysis in a self-serve manner. It is a static React application hosted on [AWS S3](https://aws.amazon.com/s3/) as a static website, with [Amazon CloudFront](https://aws.amazon.com/cloudfront/) for content distribution, [Amazon Cognito](https://aws.amazon.com/cognito/) user pool, and [Amazon Amplify](https://aws.amazon.com/amplify/) for authentication.
-- **Extraction Service**: The core component of the solution that manages the video metadata extraction workflow. It supports concurrency management, high availability, and flexible configuration. The extracted data is accessible via S3 and RESTful APIs. It is built using [Amazon Step Functions](https://aws.amazon.com/step-functions/), [Amazon API Gateway](https://aws.amazon.com/api-gateway/), [AWS Lambda](https://aws.amazon.com/lambda/), [Amazon DynamoDB](https://aws.amazon.com/dynamodb/), [Amazon OpenSearch Service](https://aws.amazon.com/opensearch-service/), [Amazon SQS](https://aws.amazon.com/sqs/), [Amazon SNS](https://aws.amazon.com/sns/), Amazon S3, and [Amazon VPC](https://aws.amazon.com/vpc/).
+- **Web UI**: This allows users to upload videos, extract metadata, and apply dynamic analysis in a self-serve manner. It is a static React application hosted on [Amazon S3](https://aws.amazon.com/s3/) as a static website, with [Amazon CloudFront](https://aws.amazon.com/cloudfront/) for content distribution, [Amazon Cognito](https://aws.amazon.com/cognito/) user pool, and [Amazon Amplify](https://aws.amazon.com/amplify/) for authentication.
+- **Extraction Service**: This core component of the solution manages the video metadata extraction workflow. It handles process concurrency (the number of videos and frames processed in parallel), ensures high availability, and offers flexible configuration options. The extracted data is accessible via S3 and RESTful APIs. It is built using [Amazon Step Functions](https://aws.amazon.com/step-functions/), [Amazon API Gateway](https://aws.amazon.com/api-gateway/), [AWS Lambda](https://aws.amazon.com/lambda/), [Amazon DynamoDB](https://aws.amazon.com/dynamodb/), [Amazon OpenSearch Service](https://aws.amazon.com/opensearch-service/), [Amazon SQS](https://aws.amazon.com/sqs/), [Amazon SNS](https://aws.amazon.com/sns/), Amazon S3, and [Amazon VPC](https://aws.amazon.com/vpc/).
 - **Evaluation Service**: A lightweight component that helps users construct GenAI prompts and easily run evaluation tasks through the Web UI. It includes sample prompt templates for video content moderation, summarization, and IAB classification, demonstrating how to leverage Generative AI for flexible video analysis based on the Extraction Service output. This is a serverless application utilizing Amazon API Gateway, AWS Lambda, [Amazon Bedrock](https://aws.amazon.com/bedrock/), and Amazon DynamoDB.
 
 ![configureation UI](./assets/guidance-diagram.png)
@@ -65,7 +70,7 @@ The extraction service allows you to customize the extraction process, including
 This flexibility gives users control over the workflow, enabling only the necessary features to optimize costs and processing times. Below is a screenshot of the extraction configuration page. The same settings can also be configured via the RESTful API.
 ![Extraction Configuration](./assets/extraction-config.png)
 
-#### Video Extraction Data
+#### Extracted Video Data
 The extraction service will output video data at the following levels of granularity:
 - **Visual Frames**
 
@@ -102,12 +107,12 @@ You are responsible for the cost of the AWS services used while running this Gui
 - Enabling audio transcription: The solution uses Amazon Transcribe to convert the audio of the video into text. You can disable audio transcription for videos that don't require audio extraction to reduce costs.
 
 Here are sample cost estimates for a monthly volume of 1,000 video minutes:
-- **~$350** (35 cents per min): OpenSearch (Dev), 1 FPS (Frame Per Second) sample rate, enabled smart sampling (50% sample rate), enabled all the visual extraction features, enabled audio transcription.
-- **~$280** (28 cents per min): OpenSearch (Dev), 1 FPS sample rate,, enabled smart sampling (50% sample rate), enabled visual extraction features: Label detection, moderation detection, text extraction, image caption, disabled audio transcription.
-- **~$160** (16 cents per min): without OpenSearch (no vector search supported), 0.2 FPS (every 5 seconds) sample rate, enabled smart sampling (50% sample rate), enabled all the visual extraction features, enabled audio transcription.
+- **~$350** (¢35 per min): OpenSearch (Dev), 1 FPS (Frame Per Second) sample rate, enabled smart sampling (50% sample rate), enabled all the visual extraction features, enabled audio transcription.
+- **~$280** (¢28 per min): OpenSearch (Dev), 1 FPS sample rate,, enabled smart sampling (50% sample rate), enabled visual extraction features: Label detection, moderation detection, text extraction, image caption, disabled audio transcription.
+- **~$160** (¢16 per min): without OpenSearch (no vector search supported), 0.2 FPS (every 5 seconds) sample rate, enabled smart sampling (50% sample rate), enabled all the visual extraction features, enabled audio transcription.
 
 
-For production workloads, you can reach out to your AWS account team for a more detailed cost estimation.
+For production workloads, please contact your AWS account team for a more detailed cost estimation. Increased usage may qualify for private pricing options, which can further reduce your costs.
 
 ## Prerequisites
 
@@ -116,7 +121,9 @@ For production workloads, you can reach out to your AWS account team for a more 
 - In Amazon Bedrock, make sure you have access to the required models: 
     - Titan multimodal embedding V1
     - Titan text embedding V2
-    - Anthropic Claude V3 Haiku and Sonnet
+    - Anthropic Claude V2 
+    - Anthropic Claude V3 Haiku 
+    - Anthropic Claude V3/V3.5 Sonnet
 
     Refer to [this guide](https://catalog.workshops.aws/building-with-amazon-bedrock/en-US/prerequisites/bedrock-setup) for instructions on managing access to Bedrock models.
 
@@ -129,7 +136,7 @@ For production workloads, you can reach out to your AWS account team for a more 
 - [ ] Install Node.js
 https://nodejs.org/en/download/
 
-- [ ] Install Python 3.8+
+- [ ] Install Python 3.9+
 https://www.python.org/downloads/
 
 - [ ] Install Git
