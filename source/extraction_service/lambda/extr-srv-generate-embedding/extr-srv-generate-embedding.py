@@ -31,7 +31,7 @@ def lambda_handler(event, context):
     if embedding_type == "txt":
         body = json.dumps({
                 "inputText": f"{text_input}", 
-                "dimensions": 1536,
+                "dimensions": 1024,
                 "normalize": True
             })
         try:

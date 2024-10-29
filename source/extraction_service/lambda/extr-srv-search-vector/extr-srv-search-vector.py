@@ -127,9 +127,8 @@ def search_text_embedding(input_text, task_ids, score_threshold, opensearch_indi
     )
     response_payload = json.loads(response['Payload'].read())
     embedding = response_payload.get("body")
-    if not embedding:
-        return None
-        
+
+
     # Search DB
     query = {
         "_source": ["task_id","image_s3_uri","timestamp","embedding_text"], 

@@ -22,9 +22,7 @@
 
 Organizations across advertising, media and entertainment, social media, education, gaming, and other sectors require efficient solutions to evaluate and analyze video assets flexibly. Generative AI (GenAI) has unlocked new opportunities and significantly enhanced the accuracy and flexibility of these workflows.
 
-Pre-built video analysis tools can be helpful, but industry-specific needs often demand customization and modular design for smooth production integration. Customers with video assets often create redundant pipelines (e.g., separate ones for video moderation and ad break detection that reprocess the same videos), leading to repeated metadata extraction, wasted resources, and higher costs.
-
-This solution provides robust components that helps builders reuse extraction results across multiple analysis pipelines, reducing unnecessary effort and lowering costs by breaking the video analysis process into two independent steps:
+While building a GenAI-powered video analysis workflow is accessible, customers with video assets often create redundant pipelines that lead to repeated metadata extraction, and higher costs. This solution offers robust components that enable builders to reuse extraction results across multiple analysis pipelines, thereby reducing unnecessary effort and lowering costs. It achieves this by breaking the video analysis process into two independent steps:
 
 1. Extract Information: A generic process that utilize AI, ML, and GenAI features to detect and extract information from both the visual and audio aspects of the video at the desired level of granularity. 
 
@@ -37,11 +35,10 @@ This solution provides robust components that helps builders reuse extraction re
     - Video scene analysis and ad break detection.
     - More adhoc video analysis use cases.
 
-The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which you can deploy to your AWS account by following the [instruction](#deployment-steps).
+The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which you can deploy to your AWS account by following the [instruction](#install-environment-dependencies-and-set-up-authentication).
 
-#### A screenshot of the built-in web UI
-![Demo video](./assets/screenshot-shot.png)
-
+#### Logical workflow
+![Workflow](./assets/workflow.png)
 
 ### Architecture Overview
 
