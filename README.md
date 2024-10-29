@@ -35,7 +35,7 @@ While building a GenAI-powered video analysis workflow is accessible, customers 
     - Video scene analysis and ad break detection.
     - More adhoc video analysis use cases.
 
-The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which you can deploy to your AWS account by following the [instruction](#deployment-steps).
+The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which you can deploy to your AWS account by following the [instruction](#install-environment-dependencies-and-set-up-authentication).
 
 #### A screenshot of the built-in web UI
 ![Demo video](./assets/screenshot-shot.png)
