@@ -40,6 +40,8 @@ The solution is available as a [CDK](https://aws.amazon.com/cdk/) package, which
 #### A screenshot of the built-in web UI
 ![Demo video](./assets/screenshot-shot.png)
 
+#### Logical workflow
+![Workflow](./assets/workflow.png)
 
 ### Architecture Overview
 
