@@ -22,7 +22,7 @@
 
 Organizations across advertising, media and entertainment, social media, education, gaming, and other sectors require efficient solutions to evaluate and analyze video assets flexibly. Generative AI (GenAI) has unlocked new opportunities and significantly enhanced the accuracy and flexibility of these workflows.
 
-This solution provides robust components that helps builders reuse extraction results across multiple analysis pipelines, reducing unnecessary effort and lowering costs by breaking the video analysis process into two independent steps:
+While building a GenAI-powered video analysis workflow is accessible, customers with video assets often create redundant pipelines that lead to repeated metadata extraction, and higher costs. This solution offers robust components that enable builders to reuse extraction results across multiple analysis pipelines, thereby reducing unnecessary effort and lowering costs. It achieves this by breaking the video analysis process into two independent steps:
 
 1. Extract Information: A generic process that utilize AI, ML, and GenAI features to detect and extract information from both the visual and audio aspects of the video at the desired level of granularity. 
 
