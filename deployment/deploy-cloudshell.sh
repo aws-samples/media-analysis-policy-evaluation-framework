@@ -1,5 +1,5 @@
 # Install Node CDK package
-sudo npm install -g aws-cdk
+sudo npm install aws-cdk
 
 # Create Python Virtual Environment
 python3 -m venv .venv
