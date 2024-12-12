@@ -3,6 +3,10 @@
     height: 100%;
     width: 100%;
 }
+.videoshots .shotwarn {
+    display: block;
+    float: right;
+}
 .videoshots .total {
     font-weight: bold;
     font-size: large;

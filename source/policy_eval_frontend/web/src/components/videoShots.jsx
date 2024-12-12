@@ -1,7 +1,7 @@
 import React from 'react';
 import './videoShots.css'
 import { FetchPost } from "../resources/data-provider";
-import { Pagination, Spinner, ExpandableSection } from '@cloudscape-design/components';
+import { Pagination, Spinner, ExpandableSection, Popover, StatusIndicator } from '@cloudscape-design/components';
 import { DecimalToTimestamp } from "../resources/utility";
 
 class VideoShots extends React.Component {
@@ -65,6 +65,16 @@ class VideoShots extends React.Component {
     render() {
         return (
             <div className="videoshots">
+                <div className='shotwarn'>
+                    <Popover
+                        header="Conceptual shots are grouped frames based on a threshold for a summary view, but may not reflect precise camera switches."
+                        content="Adjust sampling frequency and thresholds for better accuracy, or use Amazon Rekognition's segment detection for precise results."
+                    >
+                        <StatusIndicator type="info">
+                        Limitation
+                        </StatusIndicator>
+                    </Popover>
+                </div>
                 {this.state.items && <div className='total'>{this.state.totalItems} shots detected</div>}
                 <div className='pager'>
                 <Pagination
