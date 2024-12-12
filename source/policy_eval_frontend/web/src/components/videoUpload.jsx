@@ -2,7 +2,7 @@ import React from 'react';
 import './videoUpload.css'
 import { FetchPost } from "../resources/data-provider";
 import {IsValidNumber} from "../resources/utility"
-import { Button, Box, Checkbox, Link, FileUpload, Select, ExpandableSection, FormField, Input, Wizard, Container, Header, SpaceBetween, Alert, Toggle, ProgressBar, ColumnLayout, Textarea} from '@cloudscape-design/components';
+import { Button, Box, Checkbox, Link, FileUpload, Select, ExpandableSection, FormField, Input, Wizard, Container, Header, SpaceBetween, Alert, Toggle, ProgressBar, ColumnLayout, Popover, StatusIndicator} from '@cloudscape-design/components';
 import { getCurrentUser } from 'aws-amplify/auth';
 
 class VideoUpload extends React.Component {
@@ -520,7 +520,18 @@ class VideoUpload extends React.Component {
                                 </Toggle>
                                 </Container>
                                 <Container header={
-                                        <Header variant="h2">Video Shot Analysis </Header>
+                                        <Header variant="h2">Video Shot Analysis 
+                                            <div className='shotwarn'>
+                                                <Popover
+                                                    header="Conceptual shots are grouped frames based on a threshold for a summary view, but may not reflect precise camera switches."
+                                                    content="Adjust sampling frequency and thresholds for better accuracy, or use Amazon Rekognition's segment detection for precise results."
+                                                >
+                                                    <StatusIndicator type="info">
+                                                    Limitation
+                                                    </StatusIndicator>
+                                                </Popover>
+                                            </div>
+                                        </Header>
                                     }>
                                         <ColumnLayout columns={1}>
                                             <Checkbox checked={this.state.enableShotSceneDetection} onChange={(e)=>this.setState({enableShotSceneDetection: e.detail.checked, enableSmartSample: true})}>
